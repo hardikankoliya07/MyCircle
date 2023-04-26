@@ -1,0 +1,50 @@
+<div class="container-fluid">
+    <div class="row p-2">
+        <div class="col p-3">
+            <div class="page-pretitle">
+                Overview
+            </div>
+            <h2 class="page-title">
+                {{this.title}}
+            </h2>
+        </div>
+        <div class="form-group pt-2 col-5">
+            <label for="formGroupExampleInput">Sorting Post</label>
+            <select id="unAuthSortPost" class="form-control" name="sortPost">
+                <option value="date">By Date &amp; Time</option>
+                <option value="title">By Post Title</option>
+            </select>
+        </div>
+
+        <div class="form-group pt-2 col-5">
+            <label for="formGroupExampleInput">Search Post</label>
+            <div class="form-outline">
+                <input type="search" id="unAuthSearchPost" class="form-control" placeholder="Search by title & desc" />
+            </div>
+        </div>
+
+    </div>
+    <div class="filterData row justify-content-start">
+        {{#if data}}
+        {{#each data}}
+        <div class="col-md-3 mt-2 mb-2">
+            {{> post/index}}
+        </div>
+        {{/each}}
+        {{else}}
+        <div style="text-align: center;">
+            <h1 class="p-5">
+                NO POST FOUND
+            </h1>
+        </div>
+        {{/if}}
+    </div>
+    <div class="d-flex justify-content-center p-3">
+        {{#each pages}}
+        <a class="m-2 justify-content-center" href="/?page={{this}}">{{this}}</a>
+        {{/each}}
+    </div>
+
+
+</div>
+<script src="/javascripts/landing.js"></script>

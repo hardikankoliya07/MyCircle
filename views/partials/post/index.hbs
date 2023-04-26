@@ -1,0 +1,43 @@
+<div class="card">
+    <div class="p-2 d-flex justify-content-between" style="align-items: center;">
+        <div class="avatar avatar-m"
+            style="background-image: url(/images/uploads/{{postBy.profile}}); border-radius: 50%; text-align: start;">
+        </div>
+        <div>{{postBy.first_name}} {{postBy.last_name}}</div>
+        <div class="avatar avatar-sm dropdown" style="cursor: pointer; background: none;"><img data-bs-toggle="dropdown"
+                src="/images/default/options.png" alt="option">
+            {{#if @root.authUser}}
+            <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                {{#isAuthUser @root.authUser._id postBy._id }}
+                {{#unless isArchive}}
+                <a href="#" data-postid={{_id}} id="editPost" data-bs-toggle="modal" data-bs-target="#editPostModel"
+                    class="dropdown-item">Edit</a>
+                {{/unless}}
+                <a href="#" data-postid={{_id}} data-archive={{isArchive}} id="archivePost" class="dropdown-item">{{#if
+                    isArchive}}unArchive{{else}}Archive{{/if}}</a>
+                {{/isAuthUser}}
+                {{#isAuthUserSave @root.authUser._id postBy._id}}
+                {{#unless isArchive}}
+                <a href="#" data-postid={{_id}} id="savedPost" class="dropdown-item">
+                    {{#if saved}}unsave{{else}}Save{{/if}}
+                </a>
+                {{/unless}}
+                {{/isAuthUserSave}}
+            </div>
+            {{/if}}
+        </div>
+    </div>
+    <hr style="margin-top: 0em; margin-bottom: 0em;" />
+    <img src="../images/posts/{{postImg}}" style="width: auto; height: 350px;" class="card-img-top" alt="post">
+    <hr style="margin-top: 0em; margin-bottom: 0em;" />
+    <div class="card-body">
+        <span class="card-title">{{this.title}}</span>
+        <p class="card-text">{{desc}}</p>
+    </div>
+    <div class="form-check-label form-text p-2" style="text-align: end;" for="disabledFieldsetCheck">
+        {{{formatDate postBy.createdOn}}}
+    </div>
+</div>
+
+{{!-- Edit Post Model --}}
+{{> post/edit}}

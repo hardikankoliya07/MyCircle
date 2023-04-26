@@ -1,0 +1,61 @@
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">UPDATE PROFILE</h5>
+            </div>
+            <form class="container" id="editProf" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div style="text-align: center; " class="form-group pt-2">
+                        {{#if authUser}}
+                        <img style="width: 100px; height: 100px; border-radius: 50%;" id="userProf"
+                            src="/images{{#if authUser.profile}}/uploads/{{authUser.profile}}{{else}}/default/user.png{{/if}}"
+                            alt="profile">
+                        {{/if}}
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="formGroupExampleInput">Select profile</label>
+                        <input type="file" class="form-control" id="profilePic" name="profile">
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="formGroupExampleInput">Enter first Name</label>
+                        <input type="text" class="form-control" name="first_name" id="first_name"
+                            placeholder="First Name">
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="formGroupExampleInput">Enter last name</label>
+                        <input type="text" class="form-control" name="last_name" id="last_name"
+                            placeholder="Last Price">
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="formGroupExampleInput">Enter email address</label>
+                        <input type="text" class="form-control" name="email" id="email" placeholder="Email address"
+                            disabled>
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="formGroupExampleInput">Select gender</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="gender" value="male"
+                                id="flexRadioDefault1">
+                            <label class="form-check-label" for="flexRadioDefault1">
+                                Male
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="gender" value="female"
+                                id="flexRadioDefault2">
+                            <label class="form-check-label" for="flexRadioDefault2">
+                                Female
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="close" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" id="update" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

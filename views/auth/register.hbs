@@ -1,0 +1,89 @@
+<link href="./dist/css/tabler.min.css?1674944402" rel="stylesheet" />
+<link href="./dist/css/tabler-flags.min.css?1674944402" rel="stylesheet" />
+<link href="./dist/css/tabler-payments.min.css?1674944402" rel="stylesheet" />
+<link href="./dist/css/tabler-vendors.min.css?1674944402" rel="stylesheet" />
+<link href="./dist/css/demo.min.css?1674944402" rel="stylesheet" />
+<style>
+    @import url('https://rsms.me/inter/inter.css');
+
+    :root {
+        --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+    }
+
+    body {
+        font-feature-settings: "cv03", "cv04", "cv11";
+    }
+
+    form .error {
+        color: #ff0000;
+    }
+</style>
+
+<div class="page page-center">
+    <div class="container container-tight py-4">
+        <form class="card card-md" id="registerForm" method="post">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Create new account</h2>
+                <div class="mb-3">
+                    <label class="form-label">First Name</label>
+                    <input type="text" id="Rfirst_name" name="Rfirst_name" class="form-control"
+                        placeholder="Enter name first">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" id="Rlast_name" name="Rlast_name" class="form-control"
+                        placeholder="Enter name last">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email address</label>
+                    <input type="email" id="Remail" name="Remail" class="form-control" placeholder="Enter email">
+                </div>
+                <div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Rgender" value="male">
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            Male
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Rgender" value="female">
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Female
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <div class="input-group input-group-flat">
+                        <input type="password"
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" id="password"
+                            name="password" class="form-control" placeholder="Password">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Confirm Password</label>
+                    <div class="input-group input-group-flat">
+                        <input type="password" id="confirm_password" name="confirm_password"
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                            class="form-control" placeholder="Password">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-check">
+                        <input type="checkbox" class="form-check-input" />
+                        <span class="form-check-label">Agree the <a href="#">terms
+                                and policy</a>.</span>
+                    </label>
+                </div>
+                <div class="form-footer">
+                    <button id="register" type="submit" class="btn btn-primary w-100">Create new account</button>
+                </div>
+            </div>
+        </form>
+        <div class="text-center text-muted mt-3">
+            Already have account? <a href="/login" tabindex="-1">Sign in</a>
+        </div>
+    </div>
+</div>
+
+<script src="../javascripts/register.js"></script>

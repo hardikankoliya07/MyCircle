@@ -1,0 +1,22 @@
+{{#if data}}
+{{#each data}}
+<div class="col-md-3 mt-2 mb-2">
+    {{> post/index}}
+</div>
+{{/each}}
+{{else}}
+<div style="text-align: center;">
+    <h1 class="p-5">
+        NO POST FOUND
+    </h1>
+</div>
+{{/if}}
+{{#title title}}
+<div class="d-flex justify-content-center p-3">
+    {{#each pages}}
+    <a class="pagination m-2 justify-content-center" data-page={{this}} href="/timeline/?page={{this}}">{{this}}</a>
+    {{!-- <span class="pagination m-2 justify-content-center" data-page={{this}}><a href="#">{{this}}</a></span> --}}
+    {{!-- <a class="pagination m-2 justify-content-center" data-page={{this}}>{{this}}</a> --}}
+    {{/each}}
+</div>
+{{/title}}
