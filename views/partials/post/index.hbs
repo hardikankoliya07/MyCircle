@@ -32,7 +32,9 @@
     <hr style="margin-top: 0em; margin-bottom: 0em;" />
     <div class="card-body">
         <span class="card-title">{{this.title}}</span>
-        <p class="card-text">{{desc}}</p>
+        <div class="card-text postContent">
+            {{desc}}
+        </div>
     </div>
     <div class="form-check-label form-text p-2" style="text-align: end;" for="disabledFieldsetCheck">
         {{{formatDate postBy.createdOn}}}

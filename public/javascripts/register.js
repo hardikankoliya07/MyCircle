@@ -20,6 +20,13 @@ $(document).ready(function () {
                 equalTo: "#password"
             }
         },
+        errorPlacement: function (error, element) {
+            if (element.attr('type') == 'radio' || element.attr('type') == 'password') {
+                error.appendTo(element.closest('.myError'));
+            } else {
+                error.insertAfter(element);
+            }
+        },
         messages: {
             Rfirst_name: "Please enter your first name",
             Rlast_name: "Please enter your last name",

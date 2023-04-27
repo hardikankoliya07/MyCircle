@@ -9,3 +9,9 @@ a {
 form .error {
   color: red;
 }
+
+.postContent {
+  overflow-y: scroll;
+  height: 5em;
+  text-align: justify;
+}

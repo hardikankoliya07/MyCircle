@@ -20,6 +20,13 @@ $(document).ready(function () {
                 minlength: "Your password must be at least 8 characters long"
             }
         },
+        errorPlacement: function (error, element) {
+            if (element.attr('type') == 'radio' || element.attr('type') == 'password') {
+                error.appendTo(element.closest('.myError'));
+            } else {
+                error.insertAfter(element);
+            }
+        },
         submitHandler: function (form) {
             form.submit();
         }

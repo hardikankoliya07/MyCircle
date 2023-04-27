@@ -93,7 +93,7 @@ router.post('/register', async function (req, res, next) {
         "password": md5(password),
         "profile": ''
       }
-      // await UsersModel.create(data);
+      await UsersModel.create(data);
     }
     return res.send({
       type: "success",
