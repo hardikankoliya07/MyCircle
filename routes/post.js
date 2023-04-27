@@ -87,13 +87,21 @@ router.put('/:postId?', async (req, res, next) => {
                 message: `Post  ${(saved) ? "unsaved" : "saved"}  successfully`
             })
         } else {
-            if (req.body.post && req.body.archive) {
-                const archive = (req.body.archive == 'true') ? { isArchive: false } : { isArchive: true }
-                await post.findByIdAndUpdate({ _id: req.body.post }, { $set: archive });
-                res.send({
-                    type: 'success',
-                    message: `Post ${(req.body.archive == 'true') ? "unArchived" : "Archived"} successfully`
-                })
+            if (req.body.postId && req.body.archive) {
+                const userPost = await post.countDocuments({ _id: req.body.postId, postBy: req.user._id })
+                if (userPost) {
+                    const archive = (req.body.archive == 'true') ? { isArchive: false } : { isArchive: true }
+                    await post.findByIdAndUpdate({ _id: req.body.postId }, { $set: archive });
+                    res.send({
+                        type: 'success',
+                        message: `Post ${(req.body.archive == 'true') ? "unArchived" : "Archived"} successfully`
+                    })
+                } else {
+                    res.send({
+                        type: 'error',
+                        message: 'You are not owner of this post'
+                    })
+                }
             } else {
                 editUpload(req, res, async function (err) {
                     if (err instanceof multer.MulterError) {
@@ -114,17 +122,27 @@ router.put('/:postId?', async (req, res, next) => {
                         if (req.file != undefined) {
                             data.postImg = req.file.filename
                         }
-                        await post.findByIdAndUpdate({ _id: req.body.postId }, { $set: data })
-                        res.send({
-                            type: 'success',
-                            message: 'Post update successfully'
-                        })
+                        const userPost = await post.countDocuments({ _id: req.body.postId, postBy: req.user._id })
+                        if (userPost) {
+                            await post.findByIdAndUpdate({ _id: req.body.postId }, { $set: data })
+                            res.send({
+                                type: 'success',
+                                message: 'Post update successfully'
+                            })
+                        } else {
+                            res.send({
+                                type: 'error',
+                                message: 'You are not owner of this post'
+                            })
+                        }
                     }
                 })
             }
         }
     } catch (error) {
-        console.log(error);
+        res.error({
+            message: "Something when wrong"
+        })
     }
 })
 

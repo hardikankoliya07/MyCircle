@@ -208,7 +208,7 @@ $(document).ready(function () {
             async: true,
             url: "/post/",
             data: {
-                post: $(this).data('postid'),
+                postId: $(this).data('postid'),
                 archive: $(this).data('archive')
             },
             success: function (res) {

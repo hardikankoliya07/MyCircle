@@ -44,7 +44,6 @@ $(document).ready(function () {
             email: {
                 required: true,
                 email: true,
-                remote: '/getEmail'
             },
             profile: {
                 extension: "jpg|jpeg|png|gif|JPG|JPEG|PNG|GIF"
@@ -54,8 +53,7 @@ $(document).ready(function () {
                 last_name: "Please enter your last name",
                 gender: "select any one option",
                 email: {
-                    required: "Please enter a valid email address",
-                    remote: "That email is already Registered"
+                    required: "Please enter a valid email address"
                 },
                 profile: {
                     extension: "Only jpg, jpeg, png, gif Images are allowed."

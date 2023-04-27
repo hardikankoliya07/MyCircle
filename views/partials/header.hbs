@@ -5,6 +5,9 @@
         <div class="navbar navbar-light">
             <div class="container-xl">
                 <ul class="navbar-nav">
+                    <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+                        <a style="text-decoration-line: none;" href="/timeline">MY CIRCLE</a>
+                    </h1>
                     <li class="nav-item">
                         <a class="nav-link" href="/timeline">
                             <span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -189,7 +192,7 @@
                         <span class="avatar avatar-sm"
                             style="background-image: url(/images{{#if authUser.profile}}/uploads/{{authUser.profile}}{{else}}/default/user.png{{/if}})"></span>
 
-                        
+
 
                         <div class="d-none d-xl-block ps-2">
                             <span style="font-size: large; font-weight: bolder;">{{authUser.first_name}}
@@ -211,10 +214,6 @@
 {{!-- without auth user header --}}
 <header class="navbar navbar-expand-md navbar-light d-print-none">
     <div class="container-xl">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu"
-            aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
         <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
             <a style="text-decoration-line: none;" href="/">MY CIRCLE</a>
         </h1>

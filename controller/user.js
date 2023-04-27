@@ -1,6 +1,6 @@
 const user = require('../models/user');
-const mongoose = require('mongoose')
 
+/** controller use for user list */
 module.exports.user = function (req) {
     const searchVal = req.query.searchUser;
     let searchCond = {};
@@ -12,6 +12,9 @@ module.exports.user = function (req) {
                 },
                 {
                     last_name: { $regex: searchVal }
+                },
+                {
+                    full_name: { $regex: searchVal }
                 },
                 {
                     email: { $regex: searchVal }

@@ -17,6 +17,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    full_name: {
+        type: String
+    },
     email: {
         type: String,
         required: true
@@ -38,5 +41,10 @@ const userSchema = new mongoose.Schema({
         default: false
     }
 }, options)
+
+userSchema.pre('save', async function (next) {
+    this.full_name = this.first_name.concat(" ", this.last_name)
+    next()
+})
 
 module.exports = mongoose.model('users', userSchema);

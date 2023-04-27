@@ -44,9 +44,9 @@ $(document).ready(function () {
                 async: true,
                 url: "/register",
                 data: {
-                    first_name: $('#Rfirst_name').val(),
-                    last_name: $('#Rlast_name').val(),
-                    email: $('#Remail').val(),
+                    first_name: $('#Rfirst_name').val().trim(),
+                    last_name: $('#Rlast_name').val().trim(),
+                    email: $('#Remail').val().trim(),
                     gender: $('input[name=Rgender]:checked').val(),
                     password: $('#password').val()
                 },

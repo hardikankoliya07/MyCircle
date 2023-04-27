@@ -33,7 +33,7 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-/** login */
+/** user login post api */
 router.post('/login', function (req, res, next) {
   passport.authenticate('local', function (err, user, info) {
     if (err) return next(err)
@@ -48,7 +48,7 @@ router.post('/login', function (req, res, next) {
   })(req, res, next)
 })
 
-/** this is timeline page */
+/** user login page */
 router.get('/login', function (req, res, next) {
   res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   next();
@@ -59,6 +59,7 @@ router.get('/login', function (req, res, next) {
   return res.render('auth/login', { title: 'Login', layout: 'auth' });
 });
 
+/** registration render */
 router.get('/register', function (req, res, next) {
   res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   next();
@@ -69,17 +70,31 @@ router.get('/register', function (req, res, next) {
   return res.render('auth/register', { title: 'Registration', layout: 'auth' });
 });
 
+/** post api for registration */
 router.post('/register', async function (req, res, next) {
   try {
-    const data = {
-      "first_name": req.body.first_name,
-      "last_name": req.body.last_name,
-      "email": req.body.email,
-      "gender": req.body.gender,
-      "password": md5(req.body.password),
-      "profile": 'user.png'
+    const { first_name, last_name, email, gender, password } = req.body;
+    if (first_name == '' || first_name == null) {
+      throw new Error('Enter valid first name')
+    } else if (last_name == '' || last_name == null) {
+      throw new Error('Enter valid last name')
+    } else if (email == '' || email == null) {
+      throw new Error('Enter valid email')
+    } else if (gender == '' || gender == null) {
+      throw new Error('Select your gender')
+    } else if (password == '' || password == null) {
+      throw new Error('Enter Valid password')
+    } else {
+      const data = {
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": email,
+        "gender": gender,
+        "password": md5(password),
+        "profile": ''
+      }
+      // await UsersModel.create(data);
     }
-    await UsersModel.create(data);
     return res.send({
       type: "success",
       message: `User has been registered`
@@ -92,17 +107,34 @@ router.post('/register', async function (req, res, next) {
   }
 })
 
+/** logout user */
 router.get('/logout', (req, res, next) => {
-  req.logOut();
-  res.redirect('/')
+  try {
+    req.logOut();
+    res.redirect('/')
+  } catch (error) {
+    return res.send({
+      type: "error",
+      message: "Something when wrong"
+    })
+  }
 })
 
+/** registration time check the user email is already exist or not */
 router.get('/getEmail', async (req, res, next) => {
-  let data = await UsersModel.countDocuments({ email: req.query.Remail });
-  if (data) {
-    return res.send(false)
-  } else {
-    return res.send(true)
+  try {
+    let email = req.query.Remail.trim()
+    let data = await UsersModel.countDocuments({ email: email });
+    if (data) {
+      return res.send(false)
+    } else {
+      return res.send(true)
+    }
+  } catch (error) {
+    return res.send({
+      type: "error",
+      message: "Something when wrong"
+    })
   }
 })
 

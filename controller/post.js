@@ -1,7 +1,9 @@
 const post = require('../models/post');
 const mongoose = require('mongoose');
 
+/** this controller use for unAuth user Landing page */
 module.exports.allPosts = function (req) {
+
     let cond = { isArchive: false }
     const sortPost = req.query.sortPost;
     const searchVal = req.query.searchVal;
@@ -201,6 +203,7 @@ module.exports.allPosts = function (req) {
 //     return post.aggregate(myPost)
 // }
 
+/** this controller use for authUser Timeline page */
 module.exports.posts = function (req) {
 
     let cond = { isArchive: false }

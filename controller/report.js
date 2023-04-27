@@ -1,6 +1,7 @@
 const user = require('../models/user');
 const mongoose = require('mongoose')
 
+/** controller use for show user report */
 module.exports.report = function (req) {
     return user.aggregate([
         {

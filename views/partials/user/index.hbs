@@ -4,8 +4,8 @@
     </div>
     <div class="card-body row">
         <div class="col-4">
-            <img style=" border-radius: 50%; width: 100px; height: 100px; " src="/images/uploads/{{profile}}"
-                alt="user">
+            <img style=" border-radius: 50%; width: 100px; height: 100px; "
+                src="{{#if profile}}/images/uploads/{{profile}}{{else}}/images/default/user.png{{/if}}" alt="user">
         </div>
         <div class="col-4">
             <div style="height:50%; margin: auto;padding: 25px; font-weight: bold;">Total Post </div>
