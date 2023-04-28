@@ -5,6 +5,7 @@ const multer = require('multer')
 const post = require('../models/post')
 const savePost = require('../models/savedPost')
 const postControl = require('../controller/post')
+const toastr = require('toastr');
 
 router.get('/:saved?', async (req, res, next) => {
     const data = await postControl.posts(req)
@@ -86,6 +87,7 @@ router.put('/:postId?', async (req, res, next) => {
                 type: 'success',
                 message: `Post  ${(saved) ? "unsaved" : "saved"}  successfully`
             })
+
         } else {
             if (req.body.postId && req.body.archive) {
                 const userPost = await post.countDocuments({ _id: req.body.postId, postBy: req.user._id })
@@ -96,6 +98,7 @@ router.put('/:postId?', async (req, res, next) => {
                         type: 'success',
                         message: `Post ${(req.body.archive == 'true') ? "unArchived" : "Archived"} successfully`
                     })
+
                 } else {
                     res.send({
                         type: 'error',
@@ -140,8 +143,9 @@ router.put('/:postId?', async (req, res, next) => {
             }
         }
     } catch (error) {
-        res.error({
-            message: "Something when wrong"
+        res.send({
+            type: "error",
+            message: error.message
         })
     }
 })

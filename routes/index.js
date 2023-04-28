@@ -5,12 +5,31 @@ const md5 = require('md5')
 const UsersModel = require('../models/user')
 const postControl = require('../controller/post');
 const post = require('../models/post');
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  auth: {
+    user: 'zaq541432@gmail.com',
+    pass: 'foydrfsgdotmumvy',
+  },
+  secure: true
+});
+
+router.get('/verify', async (req, res, next) => {
+  const email = req.query.email
+  const data = await UsersModel.countDocuments({ email: email }, { _id: 1, email: 1 });
+  if (data) {
+    await UsersModel.findOneAndUpdate({ email: email }, { $set: { isVerify: true } })
+    res.render('verify', { title: 'Account Verification', data: data })
+  } else {
+    res.render('verify', { title: 'Account Verification', data: data })
+  }
+})
 
 /** landing page */
 router.get('/', async (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return res.redirect('/timeline')
-  }
   const count = await post.countDocuments({ isArchive: false })
   const pageArr = [];
   for (let i = 0; i < Math.ceil(count / 4); i++) {
@@ -94,6 +113,25 @@ router.post('/register', async function (req, res, next) {
         "profile": ''
       }
       await UsersModel.create(data);
+      const mailOptions = {
+        from: 'zaq541432@gmail.com',  // sender address
+        to: 'hardik.a@webcodegenie.com',   // list of receivers
+        subject: 'Account verification',
+        html: `<a href="http://localhost:3000/verify/?email=${email}" class="btn btn-primary">Verify Account</a>`,
+      };
+      transporter.sendMail(mailOptions, function (err, info) {
+        if (err) {
+          res.status(500).send({
+            type: 'error',
+            message: err.message
+          })
+        } else {
+          res.status(200).send({
+            message: 'mail send...',
+            message_id: info.messageId
+          })
+        }
+      });
     }
     return res.send({
       type: "success",

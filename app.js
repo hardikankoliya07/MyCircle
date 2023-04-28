@@ -8,7 +8,6 @@ const moment = require('moment')
 const { create } = require('express-handlebars')
 const dbConfig = require('./config')
 
-
 const helper = require('./helper/helper')
 
 const indexRouter = require('./routes/index');
@@ -19,14 +18,10 @@ const posts = require('./routes/post')
 const users = require('./routes/user')
 const report = require('./routes/report')
 
-
 var app = express();
 
 /** database configuration */
 dbConfig()
-
-/** Controller */
-const userReport = require('./controller/report')
 
 /** Models */
 const Post = require('./models/post')

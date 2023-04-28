@@ -205,7 +205,6 @@ $(document).ready(function () {
             success: function (res) {
                 if (res.type == 'success') {
                     alert(res.message);
-                    $($this).text('UnSave')
                     window.location.reload();
                 } else {
                     alert(res.message);

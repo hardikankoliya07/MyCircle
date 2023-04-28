@@ -43,32 +43,39 @@ module.exports = {
                         $options: 'i'
                     },
                     'password': md5(password),
-                }, {
-                    _id: 1,
-                    first_name: 1,
-                    last_name: 1,
-                    email: 1,
-                    isDeleted: 1,
-                    gender: 1,
-                    profile: 1
-                }).then(async function (user) {
-                    if (!user) {
-                        return done(null, false, {
-                            message: 'please enter valid login details'
-                        })
-                    } else {
-                        if (user.isDeleted) {
+                },
+                    {
+                        _id: 1,
+                        first_name: 1,
+                        last_name: 1,
+                        email: 1,
+                        isDeleted: 1,
+                        isVerify: 1,
+                        gender: 1,
+                        profile: 1
+                    }).then(async function (user) {
+                        if (!user) {
                             return done(null, false, {
-                                message: 'Your account is blocked'
+                                message: 'please enter valid login details'
                             })
+                        } else {
+                            // if (!user.isDeleted) {
+                            //     return done(null, false, {
+                            //         message: 'Your account is blocked'
+                            //     })
+                            // }
+                            if (!user.isVerify) {
+                                return done(null, false, {
+                                    message: 'Your account is not verified'
+                                })
+                            }
+                            return done(null, user)
                         }
-                        return done(null, user)
-                    }
-                }).catch(function (err) {
-                    return done(null, false, {
-                        message: 'Please enter valid login details'
+                    }).catch(function (err) {
+                        return done(null, false, {
+                            message: 'Please enter valid login details'
+                        })
                     })
-                })
             })
         )
 
