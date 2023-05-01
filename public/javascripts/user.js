@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(function () {
 
     function closeModal() {
         $("#staticBackdrop").modal("hide");
@@ -105,6 +105,40 @@ $(document).ready(function () {
             },
             error: function (error) {
                 alert(error)
+            }
+        })
+    })
+
+    $(document).on("click", '#logout', function () {
+        Swal.fire({
+            title: 'Are you sure you want to logout?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Logout!'
+        }).then((result) => {
+            console.log(result);
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "get",
+                    async: true,
+                    url: "/logout",
+                    success: function (res) {
+                        Swal.fire(
+                            'Logout!',
+                            'Your are logout.',
+                            'success'
+                        ).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload()
+                            }
+                        })
+                    },
+                    error: function (error) {
+                        alert(error)
+                    }
+                })
             }
         })
     })

@@ -1,9 +1,9 @@
 require('custom-env').env();
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
 
-var logger = require('morgan');
+const logger = require('morgan');
 const moment = require('moment')
 const { create } = require('express-handlebars')
 const dbConfig = require('./config')
@@ -18,7 +18,7 @@ const posts = require('./routes/post')
 const users = require('./routes/user')
 const report = require('./routes/report')
 
-var app = express();
+const app = express();
 
 /** database configuration */
 dbConfig()
@@ -28,7 +28,6 @@ const Post = require('./models/post')
 const SavedPost = require('./models/savedPost')
 const Report = require('./models/report')
 const User = require('./models/user');
-const { log } = require('console');
 
 // view engine setup
 const hbs = create({

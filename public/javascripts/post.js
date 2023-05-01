@@ -1,10 +1,5 @@
 $(function () {
 
-    // setInterval(function () {
-    // console.log("-----------------");
-    // common.notify('success', "res.message")
-    // }, 1000)
-
     $(document).on('change', '#postImg', function () {
         const file = this.files[0];
         if (file) {
@@ -79,7 +74,7 @@ $(function () {
                 $('.filterData').html(res)
             },
             error: function (error) {
-                alert(error)
+                console.log(error);
             }
         })
     }
@@ -133,10 +128,10 @@ $(function () {
                 processData: false,
                 success: function (res) {
                     if (res.type == 'success') {
+                        notify('success', res.message);
                         $("#addPostModel").modal("hide");
-                        toastr.success(res.message);
                     } else {
-                        toastr.error(res.message);
+                        notify('error', res.message);
                     }
                 },
                 error: function (err) {
@@ -169,7 +164,7 @@ $(function () {
                 $('#updatePost').data("post", res.data._id)
             },
             error: function (error) {
-                toastr.error(res.message);
+                console.log(error.message);
             }
         })
     })
@@ -189,11 +184,11 @@ $(function () {
             processData: false,
             success: function (res) {
                 if (res.type == 'success') {
-                    closeModal()
+                    notify('success', res.message);
                     $("#editPostModel").modal("hide");
-                    toastr.success(res.message);
+                    postOperation()
                 } else {
-                    toastr.error(res.message);
+                    notify('error', res.message);
                 }
             },
             error: function (err) {
@@ -209,9 +204,9 @@ $(function () {
             url: `/post/${$(this).data('postid')}`,
             success: function (res) {
                 if (res.type == 'success') {
-                    toastr.success(res.message);
+                    notify('success', res.message);
                 } else {
-                    toastr.error(res.message);
+                    notify('error', res.message);
                 }
             },
             error: function (err) {

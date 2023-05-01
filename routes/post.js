@@ -125,7 +125,7 @@ router.put('/:postId?', async (req, res, next) => {
                         }
                         const userPost = await post.countDocuments({ _id: req.body.postId, postBy: req.user._id })
                         if (userPost) {
-                            await post.findByIdAndUpdate({ _id: req.body.postId }, { $set: data })
+                            const newData = await post.findOneAndUpdate({ _id: req.body.postId }, { $set: data })
                             res.send({
                                 type: 'success',
                                 message: 'Post update successfully'

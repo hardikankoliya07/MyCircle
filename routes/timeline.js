@@ -29,6 +29,7 @@ router.get('/:archived?', async (req, res, next) => {
         cond.postBy = { $ne: new mongoose.Types.ObjectId(req.user._id) }
     }
     const count = await post.countDocuments(cond)
+    
     const pageArr = [];
     for (let i = 0; i < Math.ceil(count / 4); i++) {
         pageArr.push(i + 1)
