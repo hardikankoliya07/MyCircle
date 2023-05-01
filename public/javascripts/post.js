@@ -1,4 +1,9 @@
-$(document).ready(function () {
+$(function () {
+
+    // setInterval(function () {
+    // console.log("-----------------");
+    // common.notify('success', "res.message")
+    // }, 1000)
 
     $(document).on('change', '#postImg', function () {
         const file = this.files[0];
@@ -128,10 +133,10 @@ $(document).ready(function () {
                 processData: false,
                 success: function (res) {
                     if (res.type == 'success') {
-                        alert(res.message);
-                        window.location.reload()
+                        $("#addPostModel").modal("hide");
+                        toastr.success(res.message);
                     } else {
-                        alert(res.message)
+                        toastr.error(res.message);
                     }
                 },
                 error: function (err) {
@@ -164,7 +169,7 @@ $(document).ready(function () {
                 $('#updatePost').data("post", res.data._id)
             },
             error: function (error) {
-                alert(error.message)
+                toastr.error(res.message);
             }
         })
     })
@@ -184,10 +189,11 @@ $(document).ready(function () {
             processData: false,
             success: function (res) {
                 if (res.type == 'success') {
-                    alert(res.message);
-                    window.location.reload();
+                    closeModal()
+                    $("#editPostModel").modal("hide");
+                    toastr.success(res.message);
                 } else {
-                    alert(res.message);
+                    toastr.error(res.message);
                 }
             },
             error: function (err) {
@@ -197,17 +203,15 @@ $(document).ready(function () {
     })
 
     $(document).on('click', "#savedPost", function () {
-        const $this = this;
         $.ajax({
             type: 'put',
             async: true,
             url: `/post/${$(this).data('postid')}`,
             success: function (res) {
                 if (res.type == 'success') {
-                    alert(res.message);
-                    window.location.reload();
+                    toastr.success(res.message);
                 } else {
-                    alert(res.message);
+                    toastr.error(res.message);
                 }
             },
             error: function (err) {
@@ -217,6 +221,7 @@ $(document).ready(function () {
     })
 
     $(document).on('click', "#archivePost", function () {
+        const id = $(this).data('postid');
         $.ajax({
             type: 'put',
             async: true,
@@ -227,10 +232,10 @@ $(document).ready(function () {
             },
             success: function (res) {
                 if (res.type == 'success') {
-                    alert(res.message);
-                    window.location.reload();
+                    $(`#post-${id}`).parent().remove()
+                    notify('success', res.message);
                 } else {
-                    alert(res.message);
+                    notify('error', res.message)
                 }
             },
             error: function (err) {

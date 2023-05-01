@@ -1,5 +1,9 @@
 $(document).ready(function () {
 
+    function closeModal() {
+        $("#staticBackdrop").modal("hide");
+    }
+
     $(document).on("click", '#profile', function () {
         $.ajax({
             type: 'get',
@@ -25,6 +29,8 @@ $(document).ready(function () {
                 $('#userProf').attr('src', event.target.result)
             }
             reader.readAsDataURL(file)
+        } else {
+            alert("Something when wrong")
         }
     })
 
@@ -76,8 +82,8 @@ $(document).ready(function () {
                 processData: false,
                 success: function (res) {
                     if (res.type == 'success') {
-                        alert(res.message)
-                        window.location.reload()
+                        closeModal()
+                        toastr.success(res.message);
                     } else {
                         alert(res.message)
                     }

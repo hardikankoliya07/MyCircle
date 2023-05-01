@@ -27,7 +27,8 @@ dbConfig()
 const Post = require('./models/post')
 const SavedPost = require('./models/savedPost')
 const Report = require('./models/report')
-const User = require('./models/user')
+const User = require('./models/user');
+const { log } = require('console');
 
 // view engine setup
 const hbs = create({
