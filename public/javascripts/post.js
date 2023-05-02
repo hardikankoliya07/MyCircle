@@ -239,4 +239,24 @@ $(function () {
         })
     })
 
+    $(document).on('click', '#like', function () {
+        const id = $(this).data('postid');
+        $.ajax({
+            type: 'put',
+            async: true,
+            url: `/post?likePostId=${id}`,
+            success: function (res) {
+                if (res.type == 'success') {
+                    postOperation()
+                    notify('success', res.message);
+                } else {
+                    notify('error', res.message);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    })
+
 })

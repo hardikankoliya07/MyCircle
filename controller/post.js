@@ -273,7 +273,6 @@ module.exports.posts = function (req) {
                         last_name: 1,
                         email: 1,
                         profile: 1,
-                        createdOn: 1
                     }
                 }],
                 as: "user"
@@ -304,17 +303,41 @@ module.exports.posts = function (req) {
             }
         },
         {
+            $lookup: {
+                from: "likes",
+                let: {
+                    "postId": "$_id",
+                },
+                pipeline: [{
+                    $match: {
+                        $expr: {
+                            $and: [{
+                                $eq: ["$likeBy", new mongoose.Types.ObjectId(req.user._id)]
+                            },
+                            {
+                                $eq: ["$postId", "$$postId"]
+                            }]
+                        }
+                    }
+                },
+                {
+                    $project: { _id: 1 }
+                }],
+                as: "liked"
+            }
+        },
+        {
             $project: {
                 title: 1,
                 desc: 1,
                 postImg: 1,
-                isSaved: 1,
                 isArchive: 1,
-                isDeleted: 1,
+                createdOn: 1,
                 postBy: {
                     $arrayElemAt: ["$user", 0]
                 },
-                saved: { $size: "$saved" }
+                saved: { $size: "$saved" },
+                liked: { $size: "$liked" }
             }
         }
     ]
