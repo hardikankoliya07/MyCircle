@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(function () {
 
     $(document).on('change', '#postImg', function () {
         const file = this.files[0];
@@ -74,7 +74,7 @@ $(document).ready(function () {
                 $('.filterData').html(res)
             },
             error: function (error) {
-                alert(error)
+                console.log(error);
             }
         })
     }
@@ -128,10 +128,10 @@ $(document).ready(function () {
                 processData: false,
                 success: function (res) {
                     if (res.type == 'success') {
-                        alert(res.message);
-                        window.location.reload()
+                        notify('success', res.message);
+                        $("#addPostModel").modal("hide");
                     } else {
-                        alert(res.message)
+                        notify('error', res.message);
                     }
                 },
                 error: function (err) {
@@ -164,7 +164,7 @@ $(document).ready(function () {
                 $('#updatePost').data("post", res.data._id)
             },
             error: function (error) {
-                alert(error.message)
+                console.log(error.message);
             }
         })
     })
@@ -184,10 +184,11 @@ $(document).ready(function () {
             processData: false,
             success: function (res) {
                 if (res.type == 'success') {
-                    alert(res.message);
-                    window.location.reload();
+                    notify('success', res.message);
+                    $("#editPostModel").modal("hide");
+                    postOperation()
                 } else {
-                    alert(res.message);
+                    notify('error', res.message);
                 }
             },
             error: function (err) {
@@ -197,17 +198,15 @@ $(document).ready(function () {
     })
 
     $(document).on('click', "#savedPost", function () {
-        const $this = this;
         $.ajax({
             type: 'put',
             async: true,
             url: `/post/${$(this).data('postid')}`,
             success: function (res) {
                 if (res.type == 'success') {
-                    alert(res.message);
-                    window.location.reload();
+                    notify('success', res.message);
                 } else {
-                    alert(res.message);
+                    notify('error', res.message);
                 }
             },
             error: function (err) {
@@ -217,6 +216,7 @@ $(document).ready(function () {
     })
 
     $(document).on('click', "#archivePost", function () {
+        const id = $(this).data('postid');
         $.ajax({
             type: 'put',
             async: true,
@@ -227,10 +227,30 @@ $(document).ready(function () {
             },
             success: function (res) {
                 if (res.type == 'success') {
-                    alert(res.message);
-                    window.location.reload();
+                    $(`#post-${id}`).parent().remove()
+                    notify('success', res.message);
                 } else {
-                    alert(res.message);
+                    notify('error', res.message)
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    })
+
+    $(document).on('click', '#like', function () {
+        const id = $(this).data('postid');
+        $.ajax({
+            type: 'put',
+            async: true,
+            url: `/post?likePostId=${id}`,
+            success: function (res) {
+                if (res.type == 'success') {
+                    postOperation()
+                    notify('success', res.message);
+                } else {
+                    notify('error', res.message);
                 }
             },
             error: function (err) {

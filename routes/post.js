@@ -5,7 +5,7 @@ const multer = require('multer')
 const post = require('../models/post')
 const savePost = require('../models/savedPost')
 const postControl = require('../controller/post')
-const toastr = require('toastr');
+const Likes = require('../models/likes')
 
 router.get('/:saved?', async (req, res, next) => {
     const data = await postControl.posts(req)
@@ -72,6 +72,7 @@ const editUpload = multer({
 router.put('/:postId?', async (req, res, next) => {
     try {
         const postId = req.params.postId;
+        const likedPostId = req.query.likePostId;
         if (postId) {
             const data = {
                 saveBy: req.user._id,
@@ -85,9 +86,8 @@ router.put('/:postId?', async (req, res, next) => {
             }
             res.send({
                 type: 'success',
-                message: `Post  ${(saved) ? "unsaved" : "saved"}  successfully`
+                message: `Post ${(saved) ? "unsaved" : "saved"}  successfully`
             })
-
         } else {
             if (req.body.postId && req.body.archive) {
                 const userPost = await post.countDocuments({ _id: req.body.postId, postBy: req.user._id })
@@ -98,13 +98,27 @@ router.put('/:postId?', async (req, res, next) => {
                         type: 'success',
                         message: `Post ${(req.body.archive == 'true') ? "unArchived" : "Archived"} successfully`
                     })
-
                 } else {
                     res.send({
                         type: 'error',
                         message: 'You are not owner of this post'
                     })
                 }
+            } else if (likedPostId) {
+                const data = {
+                    likeBy: req.user._id,
+                    postId: likedPostId
+                }
+                const liked = await Likes.countDocuments({ likeBy: req.user._id, postId: likedPostId });
+                if (liked) {
+                    await Likes.deleteOne({ likeBy: req.user._id, postId: likedPostId })
+                } else {
+                    await Likes.create(data)
+                }
+                res.send({
+                    type: 'success',
+                    message: `Post ${(liked) ? "unLiked..." : "liked..."}`
+                })
             } else {
                 editUpload(req, res, async function (err) {
                     if (err instanceof multer.MulterError) {
@@ -127,7 +141,7 @@ router.put('/:postId?', async (req, res, next) => {
                         }
                         const userPost = await post.countDocuments({ _id: req.body.postId, postBy: req.user._id })
                         if (userPost) {
-                            await post.findByIdAndUpdate({ _id: req.body.postId }, { $set: data })
+                            const newData = await post.findOneAndUpdate({ _id: req.body.postId }, { $set: data })
                             res.send({
                                 type: 'success',
                                 message: 'Post update successfully'

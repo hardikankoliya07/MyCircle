@@ -1,4 +1,8 @@
-$(document).ready(function () {
+$(function () {
+
+    function closeModal() {
+        $("#staticBackdrop").modal("hide");
+    }
 
     $(document).on("click", '#profile', function () {
         $.ajax({
@@ -25,6 +29,8 @@ $(document).ready(function () {
                 $('#userProf').attr('src', event.target.result)
             }
             reader.readAsDataURL(file)
+        } else {
+            alert("Something when wrong")
         }
     })
 
@@ -76,8 +82,8 @@ $(document).ready(function () {
                 processData: false,
                 success: function (res) {
                     if (res.type == 'success') {
-                        alert(res.message)
-                        window.location.reload()
+                        closeModal()
+                        toastr.success(res.message);
                     } else {
                         alert(res.message)
                     }
@@ -99,6 +105,40 @@ $(document).ready(function () {
             },
             error: function (error) {
                 alert(error)
+            }
+        })
+    })
+
+    $(document).on("click", '#logout', function () {
+        Swal.fire({
+            title: 'Are you sure you want to logout?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Logout!'
+        }).then((result) => {
+            console.log(result);
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "get",
+                    async: true,
+                    url: "/logout",
+                    success: function (res) {
+                        Swal.fire(
+                            'Logout!',
+                            'Your are logout.',
+                            'success'
+                        ).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload()
+                            }
+                        })
+                    },
+                    error: function (error) {
+                        alert(error)
+                    }
+                })
             }
         })
     })

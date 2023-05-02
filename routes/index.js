@@ -1,11 +1,12 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const passport = require('passport')
 const md5 = require('md5')
 const UsersModel = require('../models/user')
 const postControl = require('../controller/post');
 const post = require('../models/post');
 const nodemailer = require('nodemailer');
+const notify = require('../public/javascripts/common/notify')
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -151,6 +152,7 @@ router.get('/logout', (req, res, next) => {
     req.logOut();
     res.redirect('/')
   } catch (error) {
+    console.log(error);
     return res.send({
       type: "error",
       message: "Something when wrong"
