@@ -165,27 +165,34 @@ router.put('/:postId?', async (req, res, next) => {
 })
 
 router.post('/', async (req, res, next) => {
-    upload(req, res, async function (err) {
-        if (err instanceof multer.MulterError) {
-            res.send({
-                type: 'error',
-                message: "Max file size 2MB allowed!"
-            })
-        } else if (err) {
-            res.send({
-                type: 'error',
-                message: err.message
-            })
-        } else {
-            req.body.postImg = req.file.filename
-            req.body.postBy = req.user._id
-            await post.create(req.body)
-            res.send({
-                type: 'success',
-                message: 'post upload successfully'
-            })
-        }
-    })
+    try {
+        upload(req, res, async function (err) {
+            if (err instanceof multer.MulterError) {
+                res.send({
+                    type: 'error',
+                    message: "Max file size 2MB allowed!"
+                })
+            } else if (err) {
+                res.send({
+                    type: 'error',
+                    message: err.message
+                })
+            } else {
+                req.body.postImg = req.file.filename
+                req.body.postBy = req.user._id
+                await post.create(req.body)
+                res.send({
+                    type: 'success',
+                    message: 'post upload successfully'
+                })
+            }
+        })
+    } catch (error) {
+        res.send({
+            type: 'error',
+            message: "Something when wrong"
+        })
+    }
 })
 
 module.exports = router;

@@ -6,7 +6,6 @@ const UsersModel = require('../models/user')
 const postControl = require('../controller/post');
 const post = require('../models/post');
 const nodemailer = require('nodemailer');
-const notify = require('../public/javascripts/common/notify')
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",

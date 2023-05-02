@@ -98,22 +98,20 @@ new CronJob(
   async function () {
     try {
       const userList = await User.find({}, { _id: 1 })
-      let data = {}
       for (const users of userList) {
-        const userPost = await Post.find({ postBy: users._id }, { _id: 1, postBy: 1 })
-        const userTotalPost = userPost.length;
+        const userPost = await Post.find({ postBy: users._id, isArchive: false }, { _id: 1, postBy: 1 })
         const userSavedPost = await SavedPost.countDocuments({ saveBy: users._id }, { _id: 1, postBy: 1, saveBy: 1 })
         const otherSavedPost = await SavedPost.countDocuments({ saveBy: { $ne: users._id }, postId: { $in: userPost.map((post) => post._id) } });
-        data = {
+        let data = {
           userId: users._id,
-          TotalPost: userTotalPost,
+          TotalPost: userPost.length,
           userSaved: userSavedPost,
           otherSaved: otherSavedPost
         }
         await Report.updateOne({ userId: users._id }, { $set: data }, { upsert: true })
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
     }
   },
   null,

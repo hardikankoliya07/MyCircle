@@ -16,7 +16,7 @@ const reportSchema = new mongoose.Schema({
     },
     TotalPost: {
         type: Number,
-        default: 0
+        default: 0,
     },
     userSaved: {
         type: Number,
@@ -27,5 +27,5 @@ const reportSchema = new mongoose.Schema({
         default: 0
     },
 }, options)
-
+    
 module.exports = mongoose.model('reports', reportSchema);

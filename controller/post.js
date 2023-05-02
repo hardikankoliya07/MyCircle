@@ -66,6 +66,14 @@ module.exports.allPosts = function (req) {
             }
         },
         {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "postId",
+                as: "totalLikes"
+            }
+        },
+        {
             $project: {
                 title: 1,
                 desc: 1,
@@ -73,7 +81,8 @@ module.exports.allPosts = function (req) {
                 isSaved: 1,
                 isArchive: 1,
                 isDeleted: 1,
-                postBy: { $arrayElemAt: ['$user', 0] }
+                postBy: { $arrayElemAt: ['$user', 0] },
+                totalLikes: { $size: "$totalLikes" }
             }
         }
     ]);
@@ -263,6 +272,12 @@ module.exports.posts = function (req) {
             $sort: sortCond
         },
         {
+            $skip: skip
+        },
+        {
+            $limit: limit
+        },
+        {
             $lookup: {
                 from: "users",
                 localField: "postBy",
@@ -276,6 +291,14 @@ module.exports.posts = function (req) {
                     }
                 }],
                 as: "user"
+            }
+        },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "postId",
+                as: "totalLikes"
             }
         },
         {
@@ -337,22 +360,23 @@ module.exports.posts = function (req) {
                     $arrayElemAt: ["$user", 0]
                 },
                 saved: { $size: "$saved" },
-                liked: { $size: "$liked" }
+                liked: { $size: "$liked" },
+                totalLikes: { $size: "$totalLikes" }
             }
         }
     ]
 
-    const page = [{
-        $skip: skip
-    },
-    {
-        $limit: limit
-    }]
+    // const page = [{
+    //     $skip: skip
+    // },
+    // {
+    //     $limit: limit
+    // }]
 
-    if (!req.params.saved) {
-        aggQuery.splice(1, 0, page[0])
-        aggQuery.splice(2, 0, page[1])
-    }
+    // if (!req.params.saved) {
+    //     aggQuery.splice(1, 0, page[0])
+    //     aggQuery.splice(2, 0, page[1])
+    // }
 
     return post.aggregate(aggQuery)
 }

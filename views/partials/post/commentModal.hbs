@@ -1,0 +1,28 @@
+<div class="modal fade modal-lg" id="commentModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+    tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex flex-column">
+                <div style="width: 100%;">
+                    <h5 class="modal-title p-2" id="exampleModalToggleLabel">Comments</h5>
+                </div>
+                <div class="row w-100" style="align-items: center;">
+                    <div class="mb-3 col-10">
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
+                            placeholder="write comment..."></textarea>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-primary">comment</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" style="max-height: calc(60vh - 200px);overflow-y: auto;">
+                {{> post/comment}}
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-target="#commentModal" data-bs-toggle="modal"
+                    data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
