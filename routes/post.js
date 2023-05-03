@@ -1,19 +1,60 @@
 const express = require('express');
 const router = express.Router();
-const path = require('path')
-const multer = require('multer')
-const post = require('../models/post')
-const savePost = require('../models/savedPost')
-const postControl = require('../controller/post')
-const Likes = require('../models/likes')
+const path = require('path');
+const multer = require('multer');
+const post = require('../models/post');
+const savePost = require('../models/savedPost');
+const postControl = require('../controller/post');
+const Likes = require('../models/likes');
+const Comment = require('../models/comments');
+const mongoose = require('mongoose');
 
-router.get('/:saved?', async (req, res, next) => {
-    const data = await postControl.posts(req)
-    const filterData = data.filter(savedData => savedData.saved == 1)
-    res.render('post/saved', {
-        title: 'Saved Post',
-        data: filterData
-    })
+router.get('/', async (req, res, next) => {
+    const postId = req.query.postId;
+    if (postId) {
+        const data = await Comment.aggregate([
+            {
+                $match: { postId: new mongoose.Types.ObjectId(postId) }
+            },
+            {
+                $sort: { createdOn: -1 }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'commentBy',
+                    foreignField: '_id',
+                    pipeline: [{
+                        $project: {
+                            full_name: 1,
+                            profile: 1
+                        }
+                    }],
+                    as: 'commentUser'
+                }
+            },
+            {
+                $project: {
+                    commentBy: 1,
+                    postId: 1,
+                    comment: 1,
+                    createdOn: 1,
+                    commentUser: { $arrayElemAt: ['$commentUser', 0] }
+                }
+            }
+        ]);
+        res.render('partials/post/comment', {
+            data: data,
+            layout: 'blank'
+        })
+    } else {
+        const data = await postControl.posts(req)
+        const filterData = data.filter(savedData => savedData.saved == 1);
+        res.render('post/saved', {
+            title: 'Saved Post',
+            data: filterData
+        })
+    }
 })
 
 const storage = multer.diskStorage({
@@ -73,6 +114,8 @@ router.put('/:postId?', async (req, res, next) => {
     try {
         const postId = req.params.postId;
         const likedPostId = req.query.likePostId;
+        const commentPostId = req.body.postId;
+        const comment = req.body.comment;
         if (postId) {
             const data = {
                 saveBy: req.user._id,
@@ -119,6 +162,48 @@ router.put('/:postId?', async (req, res, next) => {
                     type: 'success',
                     message: `Post ${(liked) ? "unLiked..." : "liked..."}`
                 })
+            } else if (commentPostId && comment) {
+                const data = {
+                    commentBy: req.user._id,
+                    postId: commentPostId,
+                    comment: comment
+                };
+                await Comment.create([data]);
+                const newData = await Comment.aggregate([
+                    {
+                        $match: { postId: new mongoose.Types.ObjectId(commentPostId) }
+                    },
+                    {
+                        $sort: { createdOn: -1 }
+                    },
+                    {
+                        $lookup: {
+                            from: 'users',
+                            localField: 'commentBy',
+                            foreignField: '_id',
+                            pipeline: [{
+                                $project: {
+                                    full_name: 1,
+                                    profile: 1
+                                }
+                            }],
+                            as: 'commentUser'
+                        }
+                    },
+                    {
+                        $project: {
+                            commentBy: 1,
+                            postId: 1,
+                            comment: 1,
+                            createdOn: 1,
+                            commentUser: { $arrayElemAt: ['$commentUser', 0] }
+                        }
+                    }
+                ]);
+                res.render('partials/post/comment', {
+                    data: newData,
+                    layout: 'blank'
+                })
             } else {
                 editUpload(req, res, async function (err) {
                     if (err instanceof multer.MulterError) {
@@ -141,7 +226,7 @@ router.put('/:postId?', async (req, res, next) => {
                         }
                         const userPost = await post.countDocuments({ _id: req.body.postId, postBy: req.user._id })
                         if (userPost) {
-                            const newData = await post.findOneAndUpdate({ _id: req.body.postId }, { $set: data })
+                            await post.findOneAndUpdate({ _id: req.body.postId }, { $set: data })
                             res.send({
                                 type: 'success',
                                 message: 'Post update successfully'

@@ -17,6 +17,10 @@ const commentSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'posts'
     },
+    parent: {
+        type: mongoose.Types.ObjectId,
+        ref: 'comments'
+    },
     comment: {
         type: String
     }

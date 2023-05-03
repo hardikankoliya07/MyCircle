@@ -36,6 +36,9 @@ const hbs = create({
     formatDate: function (datetime) { /** use moment for formate date and time */
       return moment(datetime).format('LLLL');
     },
+    commentTime: function (datetime) { /** use moment for formate date and time */
+      return moment(datetime, "YYYYMMDD").fromNow();
+    },
     isAuthUser: function (authUser, postUser, options) {
       if (authUser == postUser) {
         return options.fn(this);

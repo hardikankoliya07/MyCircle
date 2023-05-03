@@ -115,17 +115,19 @@ router.post('/register', async function (req, res, next) {
       await UsersModel.create(data);
       const mailOptions = {
         from: 'zaq541432@gmail.com',  // sender address
-        to: 'hardik.a@webcodegenie.com',   // list of receivers
+        to: email,   // list of receivers
         subject: 'Account verification',
         html: `<a href="http://localhost:3000/verify/?email=${email}" class="btn btn-primary">Verify Account</a>`,
       };
       transporter.sendMail(mailOptions, function (err, info) {
         if (err) {
+          console.log(err.message);
           res.status(500).send({
             type: 'error',
             message: err.message
           })
         } else {
+          console.log(info.messageId);
           res.status(200).send({
             message: 'mail send...',
             message_id: info.messageId

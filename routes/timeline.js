@@ -21,7 +21,6 @@ router.get('/:archived?', async (req, res, next) => {
     const isArchived = req.params.archived;
     const data = await postControl.posts(req)
     const filterPost = req.query.filterPost;
-
     let cond = { isArchive: false }
     if (filterPost == 'mine') {
         cond.isArchive = false
@@ -30,13 +29,11 @@ router.get('/:archived?', async (req, res, next) => {
         cond.isArchive = false
         cond.postBy = { $ne: new mongoose.Types.ObjectId(req.user._id) }
     }
-
     const count = await post.countDocuments(cond)
     const pageArr = [];
     for (let i = 0; i < Math.ceil(count / 4); i++) {
         pageArr.push(i + 1)
     }
-
     if (req.query.filterPost == 'mine' || req.query.filterPost == 'other' || req.query.filterPost == '' || req.query.sortPost == 'date' || req.query.sortPost == 'title') {
         return res.render('partials/post/filter', {
             title: `${(isArchived) ? 'Archived Post' : 'Timeline'}`,

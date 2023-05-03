@@ -242,8 +242,8 @@ $(function () {
             url: `/post?likePostId=${id}`,
             success: function (res) {
                 if (res.type == 'success') {
-                    postOperation();
                     notify('success', res.message);
+                    postOperation();
                 } else {
                     notify('error', res.message);
                 }
@@ -253,5 +253,64 @@ $(function () {
             }
         });
     });
+
+    $(document).on('click', '#commentIcon', function () {
+        const id = $(this).data('postid');
+        $("#btnComment").data('postid', id);
+        $.ajax({
+            type: 'get',
+            async: true,
+            url: `/post?postId=${id}`,
+            success: function (res) {
+                if (res == "" || res == null) {
+                    $("#commentBody").html("No Comment Found");
+                } else {
+                    $("#commentBody").html(res);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    })
+
+    $(document).on('click', '#commentModal', function () {
+        $('#commentArea').val("")
+    })
+
+    $(document).on('click', '#btnComment', function () {
+        const id = $(this).data('postid');
+        const comment = $('#commentArea').val();
+        const data = {
+            postId: id,
+            comment: comment.trim()
+        }
+        if (data.comment == "" || data.comment == null) {
+            notify('error', "Write Comment...");
+            return false;
+        }
+        $.ajax({
+            type: 'put',
+            async: true,
+            url: "/post/",
+            data: data,
+            success: function (res) {
+                $("#commentBody").html(res);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    })
+
+    $(document).on('click', '#subComment', function () {
+        const id = $(this).data('comment');
+        $(`#comment-${id}`).attr('hidden', false);
+    })
+
+    $(document).on('click', '#btnSubComment', function () {
+        const id = $(this).data('comment');
+        $(`#comment-${id}`).attr('hidden', true);
+    })
 
 });
