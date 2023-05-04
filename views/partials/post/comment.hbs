@@ -1,5 +1,4 @@
 {{#each data}}
-{{log this}}
 <div class="card m-1">
     <div class="card-header d-flex justify-content-between">
         <div class="avatar avatar-m"
@@ -43,11 +42,12 @@
             </div>
         </div>
     </div>
-    <div class="card m-2" id="comment-{{_id}}" hidden>
+    <div class="card m-2" id="comment-{{_id}}" style="display: none;">
         <div class="card-body">
             <div class="row w-100" style="align-items: center;">
                 <div class="col-10">
-                    <textarea class="form-control" id="subCommentArea" rows="2" placeholder="write comment..."></textarea>
+                    <textarea class="form-control" id="subCommentArea" rows="2"
+                        placeholder="write comment..."></textarea>
                 </div>
                 <div class="col-2">
                     <button id="btnSubComment" data-comment={{_id}} class="btn btn-primary">comment</button>
@@ -55,5 +55,6 @@
             </div>
         </div>
     </div>
+    {{> post/subComment}}
 </div>
 {{/each}}

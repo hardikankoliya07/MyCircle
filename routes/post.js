@@ -8,41 +8,79 @@ const postControl = require('../controller/post');
 const Likes = require('../models/likes');
 const Comment = require('../models/comments');
 const mongoose = require('mongoose');
+const commentControl = require('../controller/comments')
 
 router.get('/', async (req, res, next) => {
     const postId = req.query.postId;
     if (postId) {
-        const data = await Comment.aggregate([
-            {
-                $match: { postId: new mongoose.Types.ObjectId(postId) }
-            },
-            {
-                $sort: { createdOn: -1 }
-            },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'commentBy',
-                    foreignField: '_id',
-                    pipeline: [{
-                        $project: {
-                            full_name: 1,
-                            profile: 1
-                        }
-                    }],
-                    as: 'commentUser'
-                }
-            },
-            {
-                $project: {
-                    commentBy: 1,
-                    postId: 1,
-                    comment: 1,
-                    createdOn: 1,
-                    commentUser: { $arrayElemAt: ['$commentUser', 0] }
-                }
-            }
-        ]);
+        // const data = await Comment.aggregate([
+        //     {
+        //         $match: { postId: new mongoose.Types.ObjectId(postId), parent: { $exists: false } }
+        //     },
+        //     {
+        //         $sort: { createdOn: -1 }
+        //     },
+        //     {
+        //         $lookup: {
+        //             from: 'users',
+        //             localField: 'commentBy',
+        //             foreignField: '_id',
+        //             pipeline: [{
+        //                 $project: {
+        //                     full_name: 1,
+        //                     profile: 1
+        //                 }
+        //             }],
+        //             as: 'commentUser'
+        //         }
+        //     },
+        //     {
+        //         $lookup: {
+        //             from: 'comments',
+        //             localField: '_id',
+        //             foreignField: 'parent',
+        //             pipeline: [
+        //                 {
+        //                     $sort: { createdOn: -1 }
+        //                 },
+        //                 {
+        //                     $lookup: {
+        //                         from: 'users',
+        //                         localField: 'commentBy',
+        //                         foreignField: '_id',
+        //                         pipeline: [{
+        //                             $project: {
+        //                                 full_name: 1,
+        //                                 profile: 1
+        //                             }
+        //                         }],
+        //                         as: 'subCommentUser'
+        //                     },
+        //                 },
+        //                 {
+        //                     $project: {
+        //                         commentBy: 1,
+        //                         postId: 1,
+        //                         comment: 1,
+        //                         createdOn: 1,
+        //                         subCommentUser: { $arrayElemAt: ['$subCommentUser', 0] }
+        //                     }
+        //                 }],
+        //             as: 'subComment'
+        //         }
+        //     },
+        //     {
+        //         $project: {
+        //             commentBy: 1,
+        //             postId: 1,
+        //             comment: 1,
+        //             createdOn: 1,
+        //             subComment: 1,
+        //             commentUser: { $arrayElemAt: ['$commentUser', 0] }
+        //         }
+        //     }
+        // ]);
+        const data = await commentControl.comments(postId)
         res.render('partials/post/comment', {
             data: data,
             layout: 'blank'
@@ -116,6 +154,7 @@ router.put('/:postId?', async (req, res, next) => {
         const likedPostId = req.query.likePostId;
         const commentPostId = req.body.postId;
         const comment = req.body.comment;
+        const parent = req.body.parent;
         if (postId) {
             const data = {
                 saveBy: req.user._id,
@@ -162,44 +201,82 @@ router.put('/:postId?', async (req, res, next) => {
                     type: 'success',
                     message: `Post ${(liked) ? "unLiked..." : "liked..."}`
                 })
-            } else if (commentPostId && comment) {
+            } else if (commentPostId && comment || parent) {
                 const data = {
                     commentBy: req.user._id,
                     postId: commentPostId,
-                    comment: comment
+                    comment: comment,
                 };
+                data.parent = parent
                 await Comment.create([data]);
-                const newData = await Comment.aggregate([
-                    {
-                        $match: { postId: new mongoose.Types.ObjectId(commentPostId) }
-                    },
-                    {
-                        $sort: { createdOn: -1 }
-                    },
-                    {
-                        $lookup: {
-                            from: 'users',
-                            localField: 'commentBy',
-                            foreignField: '_id',
-                            pipeline: [{
-                                $project: {
-                                    full_name: 1,
-                                    profile: 1
-                                }
-                            }],
-                            as: 'commentUser'
-                        }
-                    },
-                    {
-                        $project: {
-                            commentBy: 1,
-                            postId: 1,
-                            comment: 1,
-                            createdOn: 1,
-                            commentUser: { $arrayElemAt: ['$commentUser', 0] }
-                        }
-                    }
-                ]);
+                // const newData = await Comment.aggregate([
+                //     {
+                //         $match: { postId: new mongoose.Types.ObjectId(commentPostId), parent: { $exists: false } }
+                //     },
+                //     {
+                //         $sort: { createdOn: -1 }
+                //     },
+                //     {
+                //         $lookup: {
+                //             from: 'users',
+                //             localField: 'commentBy',
+                //             foreignField: '_id',
+                //             pipeline: [{
+                //                 $project: {
+                //                     full_name: 1,
+                //                     profile: 1
+                //                 }
+                //             }],
+                //             as: 'commentUser'
+                //         }
+                //     },
+                //     {
+                //         $lookup: {
+                //             from: 'comments',
+                //             localField: '_id',
+                //             foreignField: 'parent',
+                //             pipeline: [
+                //                 {
+                //                     $sort: { createdOn: -1 }
+                //                 },
+                //                 {
+                //                     $lookup: {
+                //                         from: 'users',
+                //                         localField: 'commentBy',
+                //                         foreignField: '_id',
+                //                         pipeline: [{
+                //                             $project: {
+                //                                 full_name: 1,
+                //                                 profile: 1
+                //                             }
+                //                         }],
+                //                         as: 'subCommentUser'
+                //                     },
+                //                 },
+                //                 {
+                //                     $project: {
+                //                         commentBy: 1,
+                //                         postId: 1,
+                //                         comment: 1,
+                //                         createdOn: 1,
+                //                         subCommentUser: { $arrayElemAt: ['$subCommentUser', 0] }
+                //                     }
+                //                 }],
+                //             as: 'subComment'
+                //         }
+                //     },
+                //     {
+                //         $project: {
+                //             commentBy: 1,
+                //             postId: 1,
+                //             comment: 1,
+                //             createdOn: 1,
+                //             subComment: 1,
+                //             commentUser: { $arrayElemAt: ['$commentUser', 0] }
+                //         }
+                //     }
+                // ]);
+                const newData = await commentControl.comments(commentPostId)
                 res.render('partials/post/comment', {
                     data: newData,
                     layout: 'blank'
