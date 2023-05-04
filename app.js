@@ -17,6 +17,7 @@ const timeline = require('./routes/timeline');
 const posts = require('./routes/post')
 const users = require('./routes/user')
 const report = require('./routes/report')
+const helpers = require('handlebars-helpers')();
 
 const app = express();
 
@@ -33,6 +34,7 @@ const User = require('./models/user');
 const hbs = create({
   extname: '.hbs',
   helpers: {
+    ...helpers,
     formatDate: function (datetime) { /** use moment for formate date and time */
       return moment(datetime).format('LLLL');
     },
@@ -60,6 +62,11 @@ const hbs = create({
     },
     ifCond: function (current, pages, options) {
       if (current == pages) {
+        return options.fn(this);
+      }
+    },
+    checkCommentDelete: function (authUser, postUser, commentBy, options) {
+      if (authUser == postUser || authUser == commentBy) {
         return options.fn(this);
       }
     }

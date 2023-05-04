@@ -1,5 +1,5 @@
 {{#each data}}
-<div class="card m-1">
+<div class="card m-1" id="comment">
     <div class="card-header d-flex justify-content-between">
         <div class="avatar avatar-m"
             style="background-image:{{#if commentUser.profile}}url(/images/uploads/{{commentUser.profile}}){{else}}url(/images/default/user.png){{/if}}; border-radius: 50%; text-align: start;">
@@ -7,8 +7,9 @@
         <div>
             {{commentUser.full_name}}
         </div>
-        <div>
+        <div id="mainComment" data-maincommentid={{_id}} data-postid={{postId}}>
             {{#if @root.authUser}}
+            {{#checkCommentDelete @root.authUser._id @root.postById commentBy}}
             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash-x-filled user-select-auto"
                 width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -20,6 +21,7 @@
                     d="M14 2a2 2 0 0 1 2 2a1 1 0 0 1 -1.993 .117l-.007 -.117h-4l-.007 .117a1 1 0 0 1 -1.993 -.117a2 2 0 0 1 1.85 -1.995l.15 -.005h4z"
                     stroke-width="0" fill="currentColor"></path>
             </svg>
+            {{/checkCommentDelete}}
             {{/if}}
         </div>
     </div>
@@ -31,7 +33,7 @@
             <div class="col-6">
                 {{{commentTime createdOn}}}
             </div>
-            <div id="subComment" data-comment={{_id}} class="col-6 d-flex justify-content-end">
+            <div id="subCommentBox" data-comment={{_id}} class="col-6 d-flex justify-content-end">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-repeat" width="24"
                     height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                     stroke-linecap="round" stroke-linejoin="round">
