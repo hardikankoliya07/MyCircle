@@ -254,7 +254,7 @@ $(function () {
         });
     });
 
-    $(document).on('click', '#commentIcon', function () {
+    $(document).on('click', '.commentIcon', function () {
         const id = $(this).data('postid');
         const postById = $(this).data('postby');
         $("#btnComment").data('postid', id);
@@ -339,9 +339,6 @@ $(function () {
     $(document).on('click', '#mainComment', function () {
         const maincommentId = $(this).data('maincommentid');
         const postid = $(this).data('postid');
-        // console.log('main comment');
-        // console.log(maincommentId);
-        // console.log(postid);
         $.ajax({
             type: 'delete',
             async: true,

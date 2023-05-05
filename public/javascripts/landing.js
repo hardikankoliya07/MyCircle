@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     function getURL() {
         let url = "/?";
         const sortVal = $('#unAuthSortPost').val()
@@ -36,7 +37,6 @@ $(document).ready(function () {
     };
 
     function postOperation(url) {
-        console.log(url);
         $.ajax({
             type: "get",
             async: true,
@@ -49,4 +49,24 @@ $(document).ready(function () {
             }
         })
     }
+
+    $(document).on('click', '.commentIcon', function () {
+        const id = $(this).data('postid');
+        $.ajax({
+            type: 'get',
+            async: true,
+            url: `/comment?postId=${id}`,
+            success: function (res) {
+                console.log(res);
+                if (res == "" || res == null) {
+                    $("#commentBody").html("No Comment Found");
+                } else {
+                    $("#commentBody").html(res);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    })
 })

@@ -18,7 +18,9 @@
             <div class="col-6">
                 {{{commentTime createdOn}}}
             </div>
-            <div id="subComment" data-subcommentid={{_id}} data-postid={{postId}} class="col-6 d-flex justify-content-end">
+            <div id="subComment" data-subcommentid={{_id}} data-postid={{postId}}
+                class="col-6 d-flex justify-content-end">
+                {{#if @root.authUser}}
                 {{#checkCommentDelete @root.authUser._id @root.postById commentBy}}
                 <svg xmlns="http://www.w3.org/2000/svg"
                     class="icon icon-tabler icon-tabler-trash-x-filled user-select-auto" width="24" height="24"
@@ -33,6 +35,7 @@
                         stroke-width="0" fill="currentColor"></path>
                 </svg>
                 {{/checkCommentDelete}}
+                {{/if}}
             </div>
         </div>
     </div>

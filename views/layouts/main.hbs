@@ -36,8 +36,10 @@
 <body>
   {{> header}}
   {{{body}}}
+  {{#if @root.authUser}}
   <script src="/javascripts/user.js"></script>
   <script src="/javascripts/post.js"></script>
+  {{/if}}
   <script src="/javascripts/common/notify.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
