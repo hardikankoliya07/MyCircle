@@ -5,7 +5,6 @@ const cookieSession = require('cookie-session');
 var cookieParser = require('cookie-parser');
 const session = require('express-session')
 const flash = require('connect-flash')
-const mongoose = require('mongoose')
 const UsersModel = require('../models/user')
 
 module.exports = {
@@ -59,14 +58,14 @@ module.exports = {
                                 message: 'please enter valid login details'
                             })
                         } else {
-                            // if (!user.isDeleted) {
-                            //     return done(null, false, {
-                            //         message: 'Your account is blocked'
-                            //     })
-                            // }
                             if (!user.isVerify) {
                                 return done(null, false, {
                                     message: 'Your account is not verified'
+                                })
+                            }
+                            if (user.isDeleted) {
+                                return done(null, false, {
+                                    message: 'Your account is blocked'
                                 })
                             }
                             return done(null, user)

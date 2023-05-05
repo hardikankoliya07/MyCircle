@@ -6,7 +6,7 @@ const UsersModel = require('../models/user')
 const postControl = require('../controller/post');
 const post = require('../models/post');
 const nodemailer = require('nodemailer');
-const notify = require('../public/javascripts/common/notify')
+const commentControl = require('../controller/comments');
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -29,6 +29,15 @@ router.get('/verify', async (req, res, next) => {
   }
 })
 
+router.get('/comment', async (req, res, next) => {
+  const postId = req.query.postId;
+  const data = await commentControl.comments(postId)
+  res.render('partials/post/comment', {
+    data: data,
+    layout: 'blank'
+  })
+})
+
 /** landing page */
 router.get('/', async (req, res, next) => {
   const count = await post.countDocuments({ isArchive: false })
@@ -36,16 +45,16 @@ router.get('/', async (req, res, next) => {
   for (let i = 0; i < Math.ceil(count / 4); i++) {
     pageArr.push(i + 1)
   }
-  data = await postControl.allPosts(req)
+  const data = await postControl.allPosts(req)
   if (req.query.sortPost == 'date' || req.query.sortPost == 'title' || req.query.searchVal == "") {
-    return res.render('partials/post/filter', {
+    res.render('partials/post/filter', {
       title: "Landing page",
       data: data,
       pages: pageArr,
       layout: 'blank'
     })
   } else {
-    return res.render('landing', {
+    res.render('landing', {
       title: "Landing page",
       data: data,
       pages: pageArr,
@@ -116,9 +125,9 @@ router.post('/register', async function (req, res, next) {
       await UsersModel.create(data);
       const mailOptions = {
         from: 'zaq541432@gmail.com',  // sender address
-        to: 'hardik.a@webcodegenie.com',   // list of receivers
-        subject: 'Account verification',
-        html: `<a href="http://localhost:3000/verify/?email=${email}" class="btn btn-primary">Verify Account</a>`,
+        to: email,   // list of receivers
+        subject: 'MyCircle Account verification',
+        html: `<p> Thanks for the registration on MyCircle. </p> <br/> <p> Click on 'Verify Account' and  Enjoy our platform services. </p> </br> <a href="http://localhost:3000/verify/?email=${email}" class="btn btn-primary">Verify Account</a> <br/> <br/> <p> Thanks you. </p>`,
       };
       transporter.sendMail(mailOptions, function (err, info) {
         if (err) {
@@ -128,6 +137,7 @@ router.post('/register', async function (req, res, next) {
           })
         } else {
           res.status(200).send({
+            type: "success",
             message: 'mail send...',
             message_id: info.messageId
           })

@@ -5,44 +5,43 @@ $(function () {
         if (file) {
             let reader = new FileReader();
             reader.onload = function (event) {
-                $('#imgPost').attr('src', event.target.result)
-            }
-            reader.readAsDataURL(file)
-        }
-    })
+                $('#imgPost').attr('src', event.target.result);
+            };
+            reader.readAsDataURL(file);
+        };
+    });
 
     function getURL() {
-        let url = "/timeline/?";
-        const filterVal = $('#filterPost').val()
-        const sortVal = $('#sortPost').val()
-        const searchVal = $('#searchPost').val()
-        // const page = (_this) ? _this.data('page') : 1;
+        let url = window.location.search;
+        if (url == "") {
+            url = "timeline?";
+        };
+        const filterVal = $('#filterPost').val();
+        const sortVal = $('#sortPost').val();
+        const searchVal = $('#searchPost').val();
         if (filterVal) {
-            url += `filterPost=${filterVal}&`
-        }
+            url += `&filterPost=${filterVal}`;
+        };
         if (sortVal) {
-            url += `sortPost=${sortVal}&`
-        }
+            url += `&sortPost=${sortVal}`;
+        };
         if (searchVal) {
-            url += `searchVal=${searchVal}&`
-        }
-        // if (page) {
-        //     url += `page=${page}&`
-        // }
+            url += `&searchVal=${searchVal}`;
+        };
         return url
-    }
+    };
 
     $(document).on('change', '#filterPost', function () {
-        postOperation()
+        postOperation();
     });
 
     $(document).on('change', '#sortPost', function () {
-        postOperation()
+        postOperation();
     });
 
     $(document).on('keyup', "#searchPost", debounce(function () {
-        postOperation()
-    }, 500))
+        postOperation();
+    }, 300));
 
     function debounce(func, wait, immediate) {
         var timeout;
@@ -59,12 +58,6 @@ $(function () {
         };
     };
 
-    // $(document).on('click', ".pagination", function () {
-    //     getURL().concat("page=" + $(this).data('page'))
-    //     postOperation()
-    //     console.log(getURL());
-    // })
-
     function postOperation() {
         $.ajax({
             type: "get",
@@ -76,8 +69,8 @@ $(function () {
             error: function (error) {
                 console.log(error);
             }
-        })
-    }
+        });
+    };
 
     $('#postForm').submit(function (e) {
         e.preventDefault();
@@ -139,7 +132,7 @@ $(function () {
                 }
             })
         }
-    })
+    });
 
     $(document).on('change', '#editPostImg', function () {
         const file = this.files[0];
@@ -150,7 +143,7 @@ $(function () {
             }
             reader.readAsDataURL(file)
         }
-    })
+    });
 
     $(document).on("click", '#editPost', function () {
         $.ajax({
@@ -167,7 +160,7 @@ $(function () {
                 console.log(error.message);
             }
         })
-    })
+    });
 
     $(document).on('click', '#updatePost', function () {
         let formData = new FormData()
@@ -195,15 +188,17 @@ $(function () {
                 console.log(err);
             }
         })
-    })
+    });
 
     $(document).on('click', "#savedPost", function () {
+        const id = $(this).data('postid');
         $.ajax({
             type: 'put',
             async: true,
             url: `/post/${$(this).data('postid')}`,
             success: function (res) {
                 if (res.type == 'success') {
+                    $("#savedDiv").load(" #savedDiv");
                     notify('success', res.message);
                 } else {
                     notify('error', res.message);
@@ -213,7 +208,7 @@ $(function () {
                 console.log(err);
             }
         })
-    })
+    });
 
     $(document).on('click', "#archivePost", function () {
         const id = $(this).data('postid');
@@ -237,7 +232,7 @@ $(function () {
                 console.log(err);
             }
         })
-    })
+    });
 
     $(document).on('click', '#like', function () {
         const id = $(this).data('postid');
@@ -247,8 +242,8 @@ $(function () {
             url: `/post?likePostId=${id}`,
             success: function (res) {
                 if (res.type == 'success') {
-                    postOperation()
                     notify('success', res.message);
+                    postOperation();
                 } else {
                     notify('error', res.message);
                 }
@@ -256,7 +251,122 @@ $(function () {
             error: function (err) {
                 console.log(err);
             }
-        })
+        });
+    });
+
+    $(document).on('click', '.commentIcon', function () {
+        const id = $(this).data('postid');
+        const postById = $(this).data('postby');
+        $("#btnComment").data('postid', id);
+        $.ajax({
+            type: 'get',
+            async: true,
+            url: `/post?postId=${id}&postById=${postById}`,
+            success: function (res) {
+                if (res == "" || res == null) {
+                    $("#commentBody").html("No Comment Found");
+                } else {
+                    $("#commentBody").html(res);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
     })
 
-})
+    $(document).on('click', '#commentModal', function () {
+        $('#commentArea').val("")
+    })
+
+    $(document).on('click', '#btnComment', function () {
+        const id = $(this).data('postid');
+        const comment = $('#commentArea').val();
+        const data = {
+            postId: id,
+            comment: comment.trim()
+        }
+        if (data.comment == "" || data.comment == null) {
+            notify('error', "Write Comment...");
+            return false;
+        }
+        $.ajax({
+            type: 'put',
+            async: true,
+            url: "/post/",
+            data: data,
+            success: function (res) {
+                $("#commentBody").html(res);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    })
+
+    $(document).on('click', '#subCommentBox', function () {
+        $(`#comment-${$(this).data('comment')}`).toggle();
+    })
+
+    $(document).on('click', '#btnSubComment', function () {
+        const _this = this;
+        const data = {
+            comment: $(this).parent().siblings().children("#subCommentArea").val(),
+            parent: $(this).data('comment'),
+            postId: $('#btnComment').data('postid')
+        }
+        if (data.comment == "" || data.comment == null) {
+            notify('error', "Write Comment...");
+            return false;
+        }
+        $.ajax({
+            type: 'put',
+            async: true,
+            url: "/post/",
+            data: data,
+            success: function (res) {
+                notify('success', "Comment...");
+                $(`#comment-${$(_this).data('comment')}`).toggle();
+                $(this).parent().siblings().children("#subCommentArea").val("")
+                $("#commentBody").html(res);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    })
+
+    $(document).on('click', '#mainComment', function () {
+        const maincommentId = $(this).data('maincommentid');
+        const postid = $(this).data('postid');
+        $.ajax({
+            type: 'delete',
+            async: true,
+            url: `/post?comment=${maincommentId}&postid=${postid}`,
+            success: function (res) {
+                $("#commentBody").html(res);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    })
+
+    $(document).on('click', '#subComment', function () {
+        const subcommentid = $(this).data('subcommentid');
+        const postid = $(this).data('postid');
+        $.ajax({
+            type: 'delete',
+            async: true,
+            url: `/post?comment=${subcommentid}&postid=${postid}`,
+            success: function (res) {
+                $("#commentBody").html(res);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    })
+
+
+});

@@ -16,6 +16,7 @@ router.get('/:archived?', async (req, res, next) => {
     if (!fs.existsSync(path.resolve(__dirname, "../public/images/posts"))) {
         fs.mkdirSync(path.resolve(__dirname, "../public/images/posts"));
     }
+
     const userReport = await Report.findOne({ userId: req.user._id }).lean()
     const isArchived = req.params.archived;
     const data = await postControl.posts(req)
@@ -29,7 +30,6 @@ router.get('/:archived?', async (req, res, next) => {
         cond.postBy = { $ne: new mongoose.Types.ObjectId(req.user._id) }
     }
     const count = await post.countDocuments(cond)
-    
     const pageArr = [];
     for (let i = 0; i < Math.ceil(count / 4); i++) {
         pageArr.push(i + 1)
@@ -39,7 +39,6 @@ router.get('/:archived?', async (req, res, next) => {
             title: `${(isArchived) ? 'Archived Post' : 'Timeline'}`,
             data: data,
             pages: pageArr,
-            url: req.url,
             layout: 'blank',
             report: userReport
         })
@@ -47,7 +46,6 @@ router.get('/:archived?', async (req, res, next) => {
         return res.render('timeline', {
             title: `${(isArchived) ? 'Archived Post' : 'Timeline'}`,
             pages: pageArr,
-            url: req.url,
             data: data,
             report: userReport
         })
