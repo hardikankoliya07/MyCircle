@@ -18,7 +18,10 @@ const transporter = nodemailer.createTransport({
   secure: true
 });
 
-router.get('/verify', async (req, res, next) => {
+router.get('/verify', function (req, res, next) {
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  next();
+}, async (req, res, next) => {
   const email = req.query.email
   const data = await UsersModel.countDocuments({ email: email }, { _id: 1, email: 1 });
   if (data) {
@@ -39,7 +42,10 @@ router.get('/comment', async (req, res, next) => {
 })
 
 /** landing page */
-router.get('/', async (req, res, next) => {
+router.get('/', function (req, res, next) {
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  next();
+}, async (req, res, next) => {
   const count = await post.countDocuments({ isArchive: false })
   const pageArr = [];
   for (let i = 0; i < Math.ceil(count / 4); i++) {
@@ -64,6 +70,9 @@ router.get('/', async (req, res, next) => {
 
 /** user login post api */
 router.post('/login', function (req, res, next) {
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  next();
+}, function (req, res, next) {
   passport.authenticate('local', function (err, user, info) {
     if (err) return next(err)
     if (!user) {

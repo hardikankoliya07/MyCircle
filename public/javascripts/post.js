@@ -124,6 +124,7 @@ $(function () {
                         notify('success', res.message);
                         $("#addPostModel").modal("hide");
                         $('#addPost').off('click');
+                        postOperation()
                     } else {
                         notify('error', res.message);
                     }
@@ -368,6 +369,5 @@ $(function () {
             }
         });
     })
-
 
 });

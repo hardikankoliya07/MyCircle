@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    account_status: {
+        type: String,
+        enum: ['private', 'public'],
+        default: 'private'
+    },
     gender: {
         type: String,
         enum: ['male', 'female'],

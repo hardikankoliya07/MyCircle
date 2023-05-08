@@ -52,6 +52,7 @@ module.exports = {
                         isDeleted: 1,
                         isVerify: 1,
                         gender: 1,
+                        account_status: 1,
                         profile: 1
                     }).then(async function (user) {
                         if (!user) {
