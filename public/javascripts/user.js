@@ -82,10 +82,10 @@ $(function () {
                 processData: false,
                 success: function (res) {
                     if (res.type == 'success') {
-                        closeModal()
+                        closeModal();
                         toastr.success(res.message);
                     } else {
-                        alert(res.message)
+                        toastr.error(res.message);
                     }
                 },
                 error: function (err) {

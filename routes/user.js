@@ -24,7 +24,7 @@ router.get('/', async (req, res, next) => {
 })
 
 /** user profile data get route */
-router.get('/getData/', async (req, res, next) => {
+router.get('/getData', async (req, res, next) => {
     try {
         const data = await UserModel.findOne({ _id: req.user._id });
         res.send({
@@ -92,9 +92,17 @@ router.put('/', async function (req, res, next) {
                             first_name: first_name,
                             last_name: last_name,
                             email: email,
-                            gender: gender
+                            gender: gender,
                         }
+                        data.full_name = data.first_name.concat(" ", data.last_name)
                         data.profile = req.file?.filename;
+                        req.session.passport.user.first_name = data.first_name
+                        req.session.passport.user.last_name = data.last_name
+                        req.session.passport.user.email = data.email
+                        req.session.passport.user.gender = data.gender
+                        req.session.passport.user.profile = req.file?.filename;
+                        req.session.passport.user.full_name = data.first_name.concat(" ", data.last_name)
+                        console.log(req.session.passport.user);
                         await UserModel.findByIdAndUpdate({ _id: req.user._id }, { $set: data })
                         res.send({
                             type: 'success',

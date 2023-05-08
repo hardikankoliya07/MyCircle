@@ -16,7 +16,6 @@ router.get('/:archived?', async (req, res, next) => {
     if (!fs.existsSync(path.resolve(__dirname, "../public/images/posts"))) {
         fs.mkdirSync(path.resolve(__dirname, "../public/images/posts"));
     }
-
     const userReport = await Report.findOne({ userId: req.user._id }).lean()
     const isArchived = req.params.archived;
     const data = await postControl.posts(req)

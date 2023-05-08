@@ -115,7 +115,7 @@ $(function () {
             $.ajax({
                 type: 'post',
                 async: true,
-                url: '/post/',
+                url: '/post',
                 data: formData,
                 contentType: false,
                 processData: false,
@@ -123,6 +123,7 @@ $(function () {
                     if (res.type == 'success') {
                         notify('success', res.message);
                         $("#addPostModel").modal("hide");
+                        $('#addPost').off('click');
                     } else {
                         notify('error', res.message);
                     }

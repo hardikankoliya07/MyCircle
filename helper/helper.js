@@ -48,6 +48,7 @@ module.exports = {
                         first_name: 1,
                         last_name: 1,
                         email: 1,
+                        full_name: 1,
                         isDeleted: 1,
                         isVerify: 1,
                         gender: 1,
