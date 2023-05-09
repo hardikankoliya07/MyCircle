@@ -25,6 +25,8 @@ router.get('/', async (req, res, next) => {
     }
 })
 
+
+
 router.post('/', async (req, res, next) => {
     const userId = req.query.userid;
     const data = {
@@ -32,11 +34,9 @@ router.post('/', async (req, res, next) => {
         followerId: userId,
         status: 'requested'
     }
-    const docs = await Follow.updateOne({ followingId: req.user._id }, { $set: data }, { upsert: true })
-    res.send({
-        type: 'success',
-        data: docs
-    })
+    await Follow.create(data)
+    const newData = await userControl.user(req);
+    res.render('partials/user/filter', { data: newData, layout: 'blank' });
 })
 
 /** user profile data get route */

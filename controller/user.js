@@ -54,18 +54,32 @@ module.exports.user = function (req) {
         },
         {
             $lookup: {
-                from: 'follows',
-                localField: '_id',
-                foreignField: 'followingId',
+                from: "follows",
+                let: {
+                    "followerId": "$_id",
+                },
                 pipeline: [{
+                    $match: {
+                        $expr: {
+                            $and: [{
+                                $eq: ["$followingId", new ObjectId(req.user._id)]
+                            },
+                            {
+                                $eq: ["$followerId", "$$followerId"]
+                            }]
+                        }
+                    }
+                },
+                {
                     $project: {
-                        followingId: 1,
-                        followerId: 1,
+                        _id: 1,
+                        createdOn: 1,
                         status: 1,
-                        createdOn: 1
+                        followingId: 1,
+                        followerId: 1
                     }
                 }],
-                as: 'follow'
+                as: "follow"
             }
         },
         {
@@ -78,7 +92,7 @@ module.exports.user = function (req) {
                 account_status: 1,
                 createdPost: { $size: "$userPost" },
                 savedPost: { $size: "$savedPost" },
-                follows: '$follow'
+                follows: { $arrayElemAt: ['$follow', 0] }
             }
         }
     ])

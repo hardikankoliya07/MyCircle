@@ -162,7 +162,7 @@
                             </span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="notification" data-bs-toggle="modal" data-bs-target="#notificationModal">
                         <a class="nav-link" href="#">
                             <span class="nav-link-icon d-md-none d-lg-inline-block">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-bell"
@@ -255,3 +255,6 @@
 
 {{!-- Add Post Model --}}
 {{> post/add}}
+
+{{!-- Notification Model --}}
+{{> notification/index}}

@@ -156,7 +156,7 @@ $(function () {
             async: true,
             url: `/user?userid=${userId}`,
             success: function (res) {
-                console.log(res);
+                $('#userList').html(res)
             },
             error: function (error) {
                 console.log(error.message);
