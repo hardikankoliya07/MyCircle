@@ -1,5 +1,9 @@
 $(function () {
 
+    const socket = io({
+        query: { "uuId": $('.container-fluid').attr('id') }
+    })
+
     $(document).on('change', '#postImg', function () {
         const file = this.files[0];
         if (file) {

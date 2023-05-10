@@ -8,7 +8,7 @@ const moment = require('moment')
 const { create } = require('express-handlebars')
 const dbConfig = require('./config')
 
-const helper = require('./helper/helper')
+const helper = require('./helper/helper');
 
 /** Routes */
 const indexRouter = require('./routes/index');

@@ -140,12 +140,12 @@ router.post('/register', async function (req, res, next) {
       };
       transporter.sendMail(mailOptions, function (err, info) {
         if (err) {
-          res.status(500).send({
+          res.statusCode(500).send({
             type: 'error',
             message: err.message
           })
         } else {
-          res.status(200).send({
+          res.statusCode(200).send({
             type: "success",
             message: 'mail send...',
             message_id: info.messageId
