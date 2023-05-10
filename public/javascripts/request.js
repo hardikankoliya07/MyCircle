@@ -1,12 +1,12 @@
 $(function () {
 
-    $(document).on('click', '#notification', function () {
+    $(document).on('click', '#request', function () {
         $.ajax({
             type: "get",
             async: true,
-            url: `/notification`,
+            url: `/request`,
             success: function (res) {
-                $('#notification-body').html(res)
+                $('#request-body').html(res)
             },
             error: function (error) {
                 console.log(error.message);
@@ -19,13 +19,13 @@ $(function () {
         $.ajax({
             type: 'put',
             async: true,
-            url: '/notification',
+            url: '/request',
             data: {
                 reqId: reqId
             },
             success: function (res) {
                 console.log(res);
-                $('#notification-body').html(res)
+                $('#request-body').html(res)
             },
             error: function (error) {
                 console.log(error.message);
@@ -38,12 +38,12 @@ $(function () {
         $.ajax({
             type: 'delete',
             async: true,
-            url: '/notification',
+            url: '/request',
             data: {
                 reqId: reqId
             },
             success: function (res) {
-                $('#notification-body').html(res)
+                $('#request-body').html(res)
             },
             error: function (error) {
                 console.log(error.message);

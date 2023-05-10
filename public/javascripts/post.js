@@ -1,8 +1,4 @@
-$(function () {
-
-    const socket = io({
-        query: { "uuId": $('.container-fluid').attr('id') }
-    })
+$(function () { 
 
     $(document).on('change', '#postImg', function () {
         const file = this.files[0];
@@ -242,10 +238,11 @@ $(function () {
 
     $(document).on('click', '#like', function () {
         const id = $(this).data('postid');
+        const postOwner = $(this).data('postby');
         $.ajax({
             type: 'put',
             async: true,
-            url: `/post?likePostId=${id}`,
+            url: `/post?likePostId=${id}&postOwner=${postOwner}`,
             success: function (res) {
                 if (res.type == 'success') {
                     notify('success', res.message);

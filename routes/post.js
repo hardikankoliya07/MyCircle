@@ -9,6 +9,7 @@ const Likes = require('../models/likes');
 const Comment = require('../models/comments');
 const commentControl = require('../controller/comments');
 const { ObjectId } = require('mongoose').Types;
+const Notification = require('../models/notification');
 
 router.get('/', async (req, res, next) => {
     const postId = req.query.postId;
@@ -87,6 +88,7 @@ router.put('/:postId?', async (req, res, next) => {
     try {
         const postId = req.params.postId;
         const likedPostId = req.query.likePostId;
+        const postOwner = req.query.postOwner;
         const commentPostId = req.body.postId;
         const comment = req.body.comment;
         const parent = req.body.parent;
@@ -121,16 +123,24 @@ router.put('/:postId?', async (req, res, next) => {
                         message: 'You are not owner of this post'
                     })
                 }
-            } else if (likedPostId) {
+            } else if (likedPostId && postOwner) {
                 const data = {
                     likeBy: req.user._id,
                     postId: likedPostId
-                }
+                };
                 const liked = await Likes.countDocuments({ likeBy: req.user._id, postId: likedPostId });
                 if (liked) {
-                    await Likes.deleteOne({ likeBy: req.user._id, postId: likedPostId })
+                    await Likes.deleteOne({ likeBy: req.user._id, postId: likedPostId });
                 } else {
-                    await Likes.create(data)
+                    await Likes.create(data);
+                    const notificationData = {
+                        notificationBy: req.user._id,
+                        notificationFor: postOwner,
+                        Message: 'Your post is like'
+                    }
+                    await Notification.create(notificationData);
+                    io.to(postOwner).emit('post-like');
+
                 }
                 res.send({
                     type: 'success',

@@ -38,7 +38,7 @@
         <div class="form-check-label form-text p-2" style="text-align: end;">
             {{#if @root.authUser}}
             <span class="ms-3 text-muted">
-                <svg id="like" data-postid={{_id}} xmlns="http://www.w3.org/2000/svg"
+                <svg id="like" data-postby={{postBy._id}} data-postid={{_id}} xmlns="http://www.w3.org/2000/svg"
                     class="icon {{#if liked}}icon-filled text-red{{/if}}" width="24" height="24" viewBox="0 0 24 24"
                     stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

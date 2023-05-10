@@ -16,8 +16,7 @@ const timeline = require('./routes/timeline');
 const posts = require('./routes/post')
 const users = require('./routes/user')
 const report = require('./routes/report')
-const notification = require('./routes/notification')
-
+const request = require('./routes/request')
 
 const helpers = require('handlebars-helpers')();
 
@@ -102,7 +101,7 @@ app.use('/timeline', timeline);
 app.use('/user', users);
 app.use('/post', posts)
 app.use('/report', report)
-app.use('/notification', notification)
+app.use('/request', request)
 
 /** CronJob : every 1 minute delete file */
 const CronJob = require('cron').CronJob;

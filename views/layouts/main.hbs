@@ -43,9 +43,18 @@
   {{#if @root.authUser}}
   <script src="/javascripts/user.js"></script>
   <script src="/javascripts/post.js"></script>
-  <script src="/javascripts/notification.js"></script>
-  {{/if}}
+  <script src="/javascripts/request.js"></script>
   <script src="/javascripts/common/notify.js"></script>
+  <script>
+    var socket = io({
+      query: { "uuId": '{{authUser._id}}' }
+    })
+    socket.on("post-like", function () {
+      notify('success', "your post liked");
+    });
+
+  </script>
+  {{/if}}
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
     integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA=="
