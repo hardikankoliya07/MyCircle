@@ -1,10 +1,10 @@
 {{#if notificationData}}
 {{#each notificationData}}
-<div class="list-group-item">
+<div class="list-group-item" id="notification-{{_id}}" data-postid={{postId}} data-id={{_id}}>
     <div class="row align-items-center">
         <div class="col-auto"><span class="status-dot status-dot-animated bg-red d-block"></span></div>
         <div class="col text-truncate">
-            <a href="#" class="text-body d-block">Post Like</a>
+            <a href="/post?postId={{postId}}" style="text-decoration: none;" class="text-body d-block">Post Like</a>
             <div class="d-block text-muted"> Post is Like By {{Message}} </div>
         </div>
     </div>

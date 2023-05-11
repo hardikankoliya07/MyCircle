@@ -12,5 +12,22 @@ $(function () {
                 console.log(err);
             }
         });
+    });
+
+    $(document).on('click', '.list-group-item', function () {
+        const id = $(this).data('id');
+        const postId = $(this).data('postid');
+        $.ajax({
+            type: 'put',
+            url: `/notification?id=${id}&postId=${postId}`,
+            async: true,
+            success: function (res) {
+                $(`#notification-${res.id}`).remove();
+                window.location.href = `/post?postId=${res.postId}`
+            },
+            error: function (err) {
+
+            }
+        })
     })
 })

@@ -7,6 +7,7 @@ const postControl = require('../controller/post');
 const post = require('../models/post');
 const nodemailer = require('nodemailer');
 const commentControl = require('../controller/comments');
+const Notification = require('../models/notification')
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -17,6 +18,13 @@ const transporter = nodemailer.createTransport({
   },
   secure: true
 });
+
+router.get('/notificationCount', async (req, res, next) => {
+  const countNotification = await Notification.countDocuments({ notificationFor: req.user._id, isSeen: false });
+  res.send({
+    countNotification: countNotification
+  })
+})
 
 router.get('/verify', function (req, res, next) {
   res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
@@ -50,6 +58,9 @@ router.get('/', function (req, res, next) {
   const pageArr = [];
   for (let i = 0; i < Math.ceil(count / 4); i++) {
     pageArr.push(i + 1)
+  }
+  if (req.isAuthenticated()) {
+    return res.redirect('/timeline')
   }
   const data = await postControl.allPosts(req)
   if (req.query.sortPost == 'date' || req.query.sortPost == 'title' || req.query.searchVal == "") {

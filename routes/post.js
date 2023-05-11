@@ -14,22 +14,27 @@ const Notification = require('../models/notification');
 router.get('/', async (req, res, next) => {
     const postId = req.query.postId;
     const postById = req.query.postById;
-    if (postId) {
-        const data = await commentControl.comments(postId)
-        res.render('partials/post/comment', {
+    if (postId && postById) {
+        const data = await commentControl.comments(postId);
+        return res.render('partials/post/comment', {
             data: data,
             postById: postById,
             layout: 'blank'
         })
     } else {
-        const data = await postControl.posts(req)
-        const filterData = data.filter(savedData => savedData.saved == 1);
-        res.render('post/saved', {
-            title: 'Saved Post',
-            data: filterData
-        })
+        if (postId) {
+            const data = await postControl.post(req);
+            return res.render('partials/post/view', { title: 'View Post', data: data })
+        } else {
+            const data = await postControl.posts(req)
+            const filterData = data.filter(savedData => savedData.saved == 1);
+            return res.render('post/saved', {
+                title: 'Saved Post',
+                data: filterData
+            })
+        }
     }
-})
+});
 
 const storage = multer.diskStorage({
     destination: function (req, file, callback) {
@@ -39,7 +44,7 @@ const storage = multer.diskStorage({
         let ext = path.extname(file.originalname);
         callback(null, `post-${Date.now()}${ext}`)
     }
-})
+});
 
 const upload = multer({
     storage: storage,
@@ -68,7 +73,7 @@ router.get('/getEdit/:postId', async (req, res, next) => {
             message: "Data not found"
         })
     }
-})
+});
 
 const editUpload = multer({
     storage: storage,
@@ -133,13 +138,16 @@ router.put('/:postId?', async (req, res, next) => {
                     await Likes.deleteOne({ likeBy: req.user._id, postId: likedPostId });
                 } else {
                     await Likes.create(data);
-                    const notificationData = {
-                        notificationBy: req.user._id,
-                        notificationFor: postOwner,
-                        Message: req.user.full_name
+                    if (postOwner != req.user._id) {
+                        const notificationData = {
+                            notificationBy: req.user._id,
+                            notificationFor: postOwner,
+                            Message: req.user.full_name,
+                            postId: likedPostId
+                        }
+                        await Notification.create(notificationData);
+                        io.to(postOwner).emit('post-like', `${req.user.full_name}`);
                     }
-                    await Notification.create(notificationData);
-                    io.to(postOwner).emit('post-like', `${req.user.full_name}`);
                 }
                 res.send({
                     type: 'success',
@@ -201,7 +209,7 @@ router.put('/:postId?', async (req, res, next) => {
             message: error.message
         })
     }
-})
+});
 
 router.post('/', async (req, res, next) => {
     try {
@@ -232,7 +240,7 @@ router.post('/', async (req, res, next) => {
             message: "Something when wrong"
         })
     }
-})
+});
 
 router.delete('/', async (req, res, next) => {
     const commentId = req.query.comment;
@@ -243,6 +251,6 @@ router.delete('/', async (req, res, next) => {
         data: data,
         layout: 'blank'
     })
-})
+});
 
 module.exports = router;

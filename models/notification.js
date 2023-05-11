@@ -17,6 +17,10 @@ const notificationSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'users'
     },
+    postId: {
+        type: mongoose.Types.ObjectId,
+        ref: 'posts'
+    },
     isSeen: {
         type: Boolean,
         default: false

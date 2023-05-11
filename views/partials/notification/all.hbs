@@ -1,0 +1,19 @@
+{{#if notificationData}}
+{{#each notificationData}}
+<div class="container p-2">
+    <div class="list-group-item cursor-pointer" data-postid={{postId}} data-id={{_id}}>
+        <div class="card p-2 {{#if isSeen}}bg-light{{else}}bg-gray-600{{/if}}">
+            <div class="row align-items-center">
+                <div class="col-auto"><span class="status-dot status-dot-animated bg-red d-block"></span></div>
+                <div class="col text-truncate">
+                    <a href="/post?postId={{postId}}" style="text-decoration: none;" class="text-body d-block">Post Like</a>
+                    <div class="d-block text-muted"> Post is Like By {{Message}} </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{/each}}
+{{else}}
+<div class="p-2">No Notification Found</div>
+{{/if}}

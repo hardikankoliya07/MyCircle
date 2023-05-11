@@ -244,3 +244,126 @@ module.exports.posts = function (req) {
 
     return post.aggregate(aggQuery)
 }
+
+module.exports.post = function (req) {
+
+    return post.aggregate([
+        {
+            $match: { _id: new mongoose.Types.ObjectId(req.query.postId) }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "postBy",
+                foreignField: "_id",
+                pipeline: [{
+                    $project: {
+                        first_name: 1,
+                        last_name: 1,
+                        email: 1,
+                        profile: 1,
+                    }
+                }],
+                as: "user"
+            }
+        },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "postId",
+                as: "totalLikes"
+            }
+        },
+        {
+            $lookup: {
+                from: 'comments',
+                localField: '_id',
+                foreignField: 'postId',
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: 'users',
+                            localField: 'commentBy',
+                            foreignField: '_id',
+                            pipeline: [{
+                                $project: {
+                                    full_name: 1,
+                                    profile: 1
+                                }
+                            }],
+                            as: 'commentUser'
+                        }
+                    },
+                    {
+                        $match: { parent: { $exists: false } }
+                    },
+                    {
+                        $sort: { createdOn: -1 }
+                    },
+                    {
+                        $lookup: {
+                            from: 'comments',
+                            localField: '_id',
+                            foreignField: 'parent',
+                            pipeline: [
+                                {
+                                    $sort: { createdOn: -1 }
+                                },
+                                {
+                                    $lookup: {
+                                        from: 'users',
+                                        localField: 'commentBy',
+                                        foreignField: '_id',
+                                        pipeline: [{
+                                            $project: {
+                                                full_name: 1,
+                                                profile: 1
+                                            }
+                                        }],
+                                        as: 'subCommentUser'
+                                    },
+                                },
+                                {
+                                    $project: {
+                                        commentBy: 1,
+                                        postId: 1,
+                                        comment: 1,
+                                        createdOn: 1,
+                                        subCommentUser: { $arrayElemAt: ['$subCommentUser', 0] }
+                                    }
+                                }],
+                            as: 'subComment'
+                        }
+                    },
+                    {
+                        $project: {
+                            commentBy: 1,
+                            postId: 1,
+                            comment: 1,
+                            createdOn: 1,
+                            commentUser: { $arrayElemAt: ['$commentUser', 0] },
+                            subComment: 1
+                        }
+                    }
+                ],
+                as: 'comment'
+            }
+        },
+        {
+            $project: {
+                title: 1,
+                desc: 1,
+                postImg: 1,
+                isArchive: 1,
+                createdOn: 1,
+                postBy: {
+                    $arrayElemAt: ["$user", 0]
+                },
+                comments: '$comment',
+                totalLikes: { $size: "$totalLikes" },
+            }
+        }
+    ])
+
+}

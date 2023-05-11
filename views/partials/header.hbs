@@ -142,15 +142,21 @@
                                     d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
                                 <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
                             </svg>
-                            <span class="badge bg-red">{{countNotification}}</span>
+                            <span class="badge bg-red" id="notification-count"></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end dropdown-menu-card">
-                            <div class="card">
+                            <div class="card" style="width: 25rem;">
                                 <div class="card-header">
-                                    <h2 class="card-title">Notifications</h2>
+                                    <div class="row w-100">
+                                        <div class="col-8">
+                                            <h2 class="card-title">Notifications</h2>
+                                        </div>
+                                        <div class="col-4">
+                                            <a href="/notification" class="btn btn-outline-primary">View all</a>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="list-group list-group-flush list-group-hoverable" id="notification-body">
-                                    
                                 </div>
                             </div>
                         </div>

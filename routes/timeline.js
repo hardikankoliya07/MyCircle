@@ -8,7 +8,6 @@ const mongoose = require('mongoose')
 const postControl = require('../controller/post');
 const post = require('../models/post')
 const Report = require('../models/report')
-const Notification = require('../models/notification')
 
 router.get('/:archived?', async (req, res, next) => {
     if (!fs.existsSync(path.resolve(__dirname, "../public/images/uploads"))) {
@@ -29,8 +28,7 @@ router.get('/:archived?', async (req, res, next) => {
         cond.isArchive = false
         cond.postBy = { $ne: new mongoose.Types.ObjectId(req.user._id) }
     }
-    const count = await post.countDocuments(cond)
-    const countNotification = await Notification.countDocuments({ notificationFor: req.user._id, isSeen: false })
+    const count = await post.countDocuments(cond);
     const pageArr = [];
     for (let i = 0; i < Math.ceil(count / 4); i++) {
         pageArr.push(i + 1)
@@ -42,7 +40,6 @@ router.get('/:archived?', async (req, res, next) => {
             pages: pageArr,
             layout: 'blank',
             report: userReport,
-            countNotification: countNotification
         })
     } else {
         return res.render('timeline', {
@@ -50,7 +47,6 @@ router.get('/:archived?', async (req, res, next) => {
             pages: pageArr,
             data: data,
             report: userReport,
-            countNotification: countNotification
         })
     }
 })
