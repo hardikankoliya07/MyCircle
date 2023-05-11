@@ -46,14 +46,29 @@
   <script src="/javascripts/request.js"></script>
   <script src="/javascripts/notification.js"></script>
   <script src="/javascripts/common/notify.js"></script>
-  <script src="/javascripts/common/main.js"></script>
+  {{!-- <script src="/javascripts/common/main.js"></script> --}}
   <script>
+    function getCount() {
+      $.ajax({
+        type: 'get',
+        async: true,
+        url: `/notificationCount`,
+        success: function (res) {
+          $('#notification-count').html(`<span>${res.countNotification}</span>`)
+        },
+        error: function (err) {
+          console.log(err);
+        }
+      });
+    }
     var socket = io({
       query: { "uuId": '{{authUser._id}}' }
     })
     socket.on("post-like", function (args) {
       notify('success', `your post liked By ${args}`);
+      getCount()
     });
+    getCount();
   </script>
   {{/if}}
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
