@@ -136,11 +136,10 @@ router.put('/:postId?', async (req, res, next) => {
                     const notificationData = {
                         notificationBy: req.user._id,
                         notificationFor: postOwner,
-                        Message: 'Your post is like'
+                        Message: req.user.full_name
                     }
                     await Notification.create(notificationData);
-                    io.to(postOwner).emit('post-like');
-
+                    io.to(postOwner).emit('post-like', `${req.user.full_name}`);
                 }
                 res.send({
                     type: 'success',

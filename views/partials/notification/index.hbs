@@ -1,10 +1,15 @@
+{{#if notificationData}}
+{{#each notificationData}}
 <div class="list-group-item">
     <div class="row align-items-center">
+        <div class="col-auto"><span class="status-dot status-dot-animated bg-red d-block"></span></div>
         <div class="col text-truncate">
-            <a href="#" class="text-body d-block">Example 1</a>
-            <div class="d-block text-muted text-truncate mt-n1">
-                Change deprecated html tags to text decoration classes...
-            </div>
+            <a href="#" class="text-body d-block">Post Like</a>
+            <div class="d-block text-muted"> Post is Like By {{Message}} </div>
         </div>
     </div>
 </div>
+{{/each}}
+{{else}}
+<div class="p-2">No Notification Found</div>
+{{/if}}
