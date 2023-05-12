@@ -19,7 +19,7 @@ const followSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['following', 'requested'],
+        enum: ['following', 'requested', 'follow back'],
         default: 'requested'
     }
 }, options)

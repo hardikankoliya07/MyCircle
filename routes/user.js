@@ -5,6 +5,7 @@ const path = require('path');
 const multer = require('multer');
 const userControl = require('../controller/user');
 const Follow = require('../models/follow');
+const User = require('../models/user');
 
 /** user list route */
 router.get('/', async (req, res, next) => {
@@ -15,29 +16,54 @@ router.get('/', async (req, res, next) => {
             res.render('partials/user/filter', { title: 'User List', data: data, layout: 'blank' });
         } else {
             res.render('user/index', { title: 'User List', data: data });
-        }
+        };
     } catch (error) {
         res.send({
             status: 500,
             type: 'error',
             message: error.message
         });
-    }
-})
-
-
+    };
+});
 
 router.post('/', async (req, res, next) => {
-    const userId = req.query.userid;
-    const data = {
-        followingId: req.user._id,
-        followerId: userId,
-        status: 'requested'
+    const { userId, status } = req.body;
+    const user = await User.findById({ _id: userId }, { account_status: 1 });
+    if (user.account_status == "private") {
+        if (status == "Requested") {
+            await Follow.findOneAndDelete({ followingId: req.user._id, followerId: userId });
+        } else if (status == "Follow back") {
+            await Follow.findOneAndUpdate({ followingId: req.user._id, followerId: userId, }, { $set: { status: 'requested' } });
+        } else {
+            const data = {
+                followingId: req.user._id,
+                followerId: userId,
+                status: 'requested'
+            };
+            await Follow.create(data);
+        }
+    } else {
+        if (status == "Following") {
+            await Follow.findOneAndDelete({ followingId: req.user._id, followerId: userId, });
+        } else if (status == "Follow back") {
+            await Follow.findOneAndUpdate({ followingId: req.user._id, followerId: userId, }, { $set: { status: 'following' } });
+        } else {
+            const data = [{
+                followingId: req.user._id,
+                followerId: userId,
+                status: 'following'
+            },
+            {
+                followingId: userId,
+                followerId: req.user._id,
+                status: 'follow back'
+            }];
+            await Follow.create(data);
+        }
     }
-    await Follow.create(data)
     const newData = await userControl.user(req);
     res.render('partials/user/filter', { data: newData, layout: 'blank' });
-})
+});
 
 /** user profile data get route */
 router.get('/getData', async (req, res, next) => {
@@ -53,8 +79,8 @@ router.get('/getData', async (req, res, next) => {
             status: 404,
             message: "user not Found"
         });
-    }
-})
+    };
+});
 
 /** user profile image */
 const storage = multer.diskStorage({
@@ -65,7 +91,7 @@ const storage = multer.diskStorage({
         let ext = path.extname(file.originalname);
         callback(null, `${req.user._id}${ext}`)
     }
-})
+});
 
 const upload = multer({
     storage: storage,
@@ -79,7 +105,7 @@ const upload = multer({
     limits: {
         fileSize: 1024 * 1024
     }
-}).single('profile')
+}).single('profile');
 
 /** user profile data update route */
 router.put('/', async function (req, res, next) {
@@ -89,12 +115,12 @@ router.put('/', async function (req, res, next) {
                 res.send({
                     type: 'error',
                     message: "Max file size 2MB allowed!"
-                })
+                });
             } else if (err) {
                 res.send({
                     type: 'error',
                     message: err.message
-                })
+                });
             } else {
                 try {
                     const { first_name, last_name, email, gender, account_status } = req.body;
@@ -135,15 +161,15 @@ router.put('/', async function (req, res, next) {
                         type: 'error',
                         message: error.message
                     });
-                }
-            }
-        })
+                };
+            };
+        });
     } catch (error) {
         res.send({
             type: 'error',
             message: 'Something when wrong'
         });
-    }
+    };
 });
 
 module.exports = router;

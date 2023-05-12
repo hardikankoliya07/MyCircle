@@ -123,7 +123,7 @@ new CronJob(
           userSaved: userSavedPost,
           otherSaved: otherSavedPost
         }
-        await Report.updateOne({ userId: users._id }, { $set: data }, { upsert: true })
+        await Report.updateOne({ userId: users._id }, { $set: data }, { upsert: true });
       }
     } catch (error) {
       console.log(error.message);

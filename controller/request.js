@@ -19,6 +19,7 @@ module.exports.request = function (req) {
                     $project: {
                         profile: 1,
                         full_name: 1,
+                        account_status: 1
                     }
                 }],
                 as: 'requestUser'

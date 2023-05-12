@@ -148,20 +148,24 @@ $(function () {
         })
     });
 
-
     $(document).on('click', '.btn-follow', function () {
         const userId = $(this).data('userid');
+        const status = $(this).children().children("#status").text().trim();
         $.ajax({
             type: 'post',
             async: true,
-            url: `/user?userid=${userId}`,
+            url: "/user",
+            data: {
+                userId: userId,
+                status: status
+            },
             success: function (res) {
                 $('#userList').html(res)
             },
             error: function (error) {
                 console.log(error.message);
             }
-        })
-    })
+        });
+    });
 
-})
+});

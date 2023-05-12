@@ -16,15 +16,18 @@ $(function () {
 
     $(document).on('click', '#accept', function () {
         const reqId = $(this).data('reqid')
+        const followingId = $(this).data('followingid')
+        const followerId = $(this).data('followerid')
         $.ajax({
             type: 'put',
             async: true,
             url: '/request',
             data: {
-                reqId: reqId
+                reqId: reqId,
+                followingId: followingId,
+                followerId: followerId
             },
             success: function (res) {
-                console.log(res);
                 $('#request-body').html(res)
             },
             error: function (error) {
@@ -50,5 +53,4 @@ $(function () {
             }
         })
     });
-
 })

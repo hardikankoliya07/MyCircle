@@ -5,16 +5,24 @@ const Follow = require('../models/follow');
 
 router.get('/', async (req, res, next) => {
     const data = await requestControl.request(req);
-    const filterReq = data.filter(req => req.status == 'requested');
+    let filterReq = data.filter(req => req.status == 'requested');
     res.render('partials/request/request', { reqData: filterReq, layout: 'blank' })
 });
 
 router.put('/', async (req, res, next) => {
-    const reqId = req.body.reqId;
+    const { reqId, followingId, followerId } = req.body;
     await Follow.findByIdAndUpdate({ _id: reqId }, { $set: { status: 'following' } });
+    if (req.user._id != followingId) {
+        const reqData = {
+            followingId: followerId,
+            followerId: followingId,
+            status: 'follow back'
+        }
+        await Follow.create(reqData);
+    }
     const data = await requestControl.request(req);
     const filterReq = data.filter(req => req.status == 'requested');
-    res.render('partials/request/request', { reqData: filterReq, layout: 'blank' })
+    res.render('partials/request/request', { reqData: filterReq, layout: 'blank' });
 });
 
 router.delete('/', async (req, res, next) => {

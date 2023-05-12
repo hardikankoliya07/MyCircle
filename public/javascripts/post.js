@@ -217,14 +217,14 @@ $(function () {
         $.ajax({
             type: 'put',
             async: true,
-            url: "/post/",
+            url: "/post",
             data: {
                 postId: $(this).data('postid'),
                 archive: $(this).data('archive')
             },
             success: function (res) {
                 if (res.type == 'success') {
-                    $(`#post-${id}`).parent().remove()
+                    $(`#post-${id}`).parent().remove();
                     notify('success', res.message);
                 } else {
                     notify('error', res.message)
