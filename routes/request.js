@@ -12,7 +12,8 @@ router.get('/', async (req, res, next) => {
 router.put('/', async (req, res, next) => {
     const { reqId, followingId, followerId } = req.body;
     await Follow.findByIdAndUpdate({ _id: reqId }, { $set: { status: 'following' } });
-    if (req.user._id != followingId) {
+    const exist = await Follow.countDocuments({ followingId: followerId, followerId: followingId });
+    if (!exist) {
         const reqData = {
             followingId: followerId,
             followerId: followingId,

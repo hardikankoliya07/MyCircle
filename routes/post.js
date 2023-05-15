@@ -26,7 +26,7 @@ router.get('/', async (req, res, next) => {
             const data = await postControl.post(req);
             return res.render('partials/post/view', { title: 'View Post', data: data })
         } else {
-            const data = await postControl.posts(req)
+            const data = await postControl.posts(req);
             const filterData = data.filter(savedData => savedData.saved == 1);
             return res.render('post/saved', {
                 title: 'Saved Post',

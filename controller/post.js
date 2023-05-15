@@ -1,10 +1,19 @@
 const post = require('../models/post');
 const mongoose = require('mongoose');
+const Follow = require('../models/follow');
+const User = require('../models/user');
 
 /** this controller use for unAuth user Landing page */
-module.exports.allPosts = function (req) {
+module.exports.allPosts = async function (req) {
 
-    let cond = { isArchive: false }
+    /** find all public account and using this ids get post */
+    const data = await User.find({ account_status: 'public' }, { _id: 1 });
+    const publicUserArr = [];
+    for (const key of data) {
+        publicUserArr.push(key._id);
+    }
+
+    let cond = { isArchive: false, postBy: { $in: publicUserArr } };
     const sortPost = req.query.sortPost;
     const searchVal = req.query.searchVal;
     const limit = 4;
@@ -35,7 +44,7 @@ module.exports.allPosts = function (req) {
         sortCond._id = -1
     }
 
-    return post.aggregate([
+    const query = [
         {
             $match: cond
         },
@@ -85,13 +94,30 @@ module.exports.allPosts = function (req) {
                 totalLikes: { $size: "$totalLikes" }
             }
         }
-    ]);
+    ];
+
+    const result = {
+        data: await post.aggregate(query),
+        cond: cond
+    };
+
+    return result;
+
 }
 
 /** this controller use for authUser Timeline page */
-module.exports.posts = function (req) {
+module.exports.posts = async function (req) {
 
-    let cond = { isArchive: false }
+    const data = await Follow.find({ followingId: req.user._id, status: 'following' }, { _id: 0, followerId: 1 });
+    const followArr = [];
+
+    for (const ids of data) {
+        followArr.push(ids.followerId);
+    }
+
+    let cond = {
+        isArchive: false, $or: [{ postBy: { $in: followArr } }, { postBy: new mongoose.Types.ObjectId(req.user._id) }]
+    };
 
     const filterPost = req.query.filterPost;
     const sortPost = req.query.sortPost;
@@ -237,12 +263,18 @@ module.exports.posts = function (req) {
                 },
                 saved: { $size: "$saved" },
                 liked: { $size: "$liked" },
-                totalLikes: { $size: "$totalLikes" }
+                totalLikes: { $size: "$totalLikes" },
+                follow: '$follow'
             }
         }
-    ]
+    ];
 
-    return post.aggregate(aggQuery)
+    const result = {
+        data: await post.aggregate(aggQuery),
+        cond: cond
+    };
+
+    return result;
 }
 
 module.exports.post = function (req) {

@@ -30,7 +30,9 @@ router.post('/', async (req, res, next) => {
     const { userId, status } = req.body;
     const user = await User.findById({ _id: userId }, { account_status: 1 });
     if (user.account_status == "private") {
-        if (status == "Requested") {
+        if (status == "Following") {
+            await Follow.findOneAndDelete({ followingId: req.user._id, followerId: userId });
+        } else if (status == "Requested") {
             await Follow.findOneAndDelete({ followingId: req.user._id, followerId: userId });
         } else if (status == "Follow back") {
             await Follow.findOneAndUpdate({ followingId: req.user._id, followerId: userId, }, { $set: { status: 'requested' } });
@@ -44,7 +46,7 @@ router.post('/', async (req, res, next) => {
         }
     } else {
         if (status == "Following") {
-            await Follow.findOneAndDelete({ followingId: req.user._id, followerId: userId, });
+            await Follow.findOneAndDelete({ followingId: req.user._id, followerId: userId });
         } else if (status == "Follow back") {
             await Follow.findOneAndUpdate({ followingId: req.user._id, followerId: userId, }, { $set: { status: 'following' } });
         } else {
@@ -52,12 +54,15 @@ router.post('/', async (req, res, next) => {
                 followingId: req.user._id,
                 followerId: userId,
                 status: 'following'
-            },
-            {
-                followingId: userId,
-                followerId: req.user._id,
-                status: 'follow back'
             }];
+            const exist = await Follow.countDocuments({ followingId: userId, followerId: req.user._id });
+            if (!exist) {
+                data.push({
+                    followingId: userId,
+                    followerId: req.user._id,
+                    status: 'follow back'
+                });
+            }
             await Follow.create(data);
         }
     }
@@ -147,7 +152,9 @@ router.put('/', async function (req, res, next) {
                         req.session.passport.user.email = data.email
                         req.session.passport.user.gender = data.gender
                         req.session.passport.user.account_status = data.account_status
-                        req.session.passport.user.profile = req.file?.filename;
+                        if (req.file) {
+                            req.session.passport.user.profile = req.file.filename;
+                        }
                         req.session.passport.user.full_name = data.first_name.concat(" ", data.last_name)
                         console.log(req.session.passport.user);
                         await UserModel.findByIdAndUpdate({ _id: req.user._id }, { $set: data })

@@ -54,7 +54,8 @@ router.get('/', function (req, res, next) {
   res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   next();
 }, async (req, res, next) => {
-  const count = await post.countDocuments({ isArchive: false })
+  const data = await postControl.allPosts(req)
+  const count = await post.countDocuments(data.cond)
   const pageArr = [];
   for (let i = 0; i < Math.ceil(count / 4); i++) {
     pageArr.push(i + 1)
@@ -62,18 +63,17 @@ router.get('/', function (req, res, next) {
   if (req.isAuthenticated()) {
     return res.redirect('/timeline')
   }
-  const data = await postControl.allPosts(req)
   if (req.query.sortPost == 'date' || req.query.sortPost == 'title' || req.query.searchVal == "") {
     res.render('partials/post/filter', {
       title: "Landing page",
-      data: data,
+      data: data.data,
       pages: pageArr,
       layout: 'blank'
     })
   } else {
     res.render('landing', {
       title: "Landing page",
-      data: data,
+      data: data.data,
       pages: pageArr,
     })
   }
