@@ -18,6 +18,7 @@ const users = require('./routes/user');
 const report = require('./routes/report');
 const request = require('./routes/request');
 const notification = require('./routes/notification');
+const chat = require('./routes/chat');
 
 const helpers = require('handlebars-helpers')();
 
@@ -104,7 +105,7 @@ app.use('/post', posts);
 app.use('/report', report);
 app.use('/request', request);
 app.use('/notification', notification);
-
+app.use('/chat', chat);
 
 /** CronJob : every 1 minute delete file */
 const CronJob = require('cron').CronJob;
