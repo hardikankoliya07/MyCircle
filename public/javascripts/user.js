@@ -2,7 +2,7 @@ $(function () {
 
     function closeModal() {
         $("#staticBackdrop").modal("hide");
-    }
+    };
 
     $(document).on("click", '#profile', function () {
         $.ajax({
@@ -14,12 +14,13 @@ $(function () {
                 $("#last_name").val(res.data.last_name);
                 $("#email").val(res.data.email);
                 $(`[name='gender'][value='${res.data.gender}']`).prop('checked', true)
+                $(`[name='account_status'][value='${res.data.account_status}']`).prop('checked', true)
             },
             error: function (error) {
                 alert(error.message)
             }
         })
-    })
+    });
 
     $(document).on('change', '#profilePic', function () {
         const file = this.files[0];
@@ -32,7 +33,7 @@ $(function () {
         } else {
             alert("Something when wrong")
         }
-    })
+    });
 
     $('#editProf').submit(function (e) {
         e.preventDefault();
@@ -47,6 +48,9 @@ $(function () {
             gender: {
                 required: true
             },
+            account_status: {
+                required: true
+            },
             email: {
                 required: true,
                 email: true,
@@ -58,6 +62,7 @@ $(function () {
                 first_name: "Please enter your first name",
                 last_name: "Please enter your last name",
                 gender: "select any one option",
+                account_status: "select any one option",
                 email: {
                     required: "Please enter a valid email address"
                 },
@@ -72,6 +77,7 @@ $(function () {
             formData.append('last_name', $('#last_name').val().trim());
             formData.append('email', $('#email').val().trim())
             formData.append('gender', $("[name=gender]:checked").val())
+            formData.append('account_status', $("[name=account_status]:checked").val())
             formData.append('profile', $('#profilePic')[0].files[0])
             $.ajax({
                 type: 'put',
@@ -82,10 +88,10 @@ $(function () {
                 processData: false,
                 success: function (res) {
                     if (res.type == 'success') {
-                        closeModal()
+                        closeModal();
                         toastr.success(res.message);
                     } else {
-                        alert(res.message)
+                        toastr.error(res.message);
                     }
                 },
                 error: function (err) {
@@ -93,7 +99,7 @@ $(function () {
                 }
             })
         }
-    })
+    });
 
     $(document).on('keyup', "#searchUser", function () {
         $.ajax({
@@ -107,7 +113,7 @@ $(function () {
                 alert(error)
             }
         })
-    })
+    });
 
     $(document).on("click", '#logout', function () {
         Swal.fire({
@@ -118,7 +124,6 @@ $(function () {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Logout!'
         }).then((result) => {
-            console.log(result);
             if (result.isConfirmed) {
                 $.ajax({
                     type: "get",
@@ -141,6 +146,26 @@ $(function () {
                 })
             }
         })
-    })
+    });
 
-})
+    $(document).on('click', '.btn-follow', function () {
+        const userId = $(this).data('userid');
+        const status = $(this).children().children("#status").text().trim();
+        $.ajax({
+            type: 'post',
+            async: true,
+            url: "/user",
+            data: {
+                userId: userId,
+                status: status
+            },
+            success: function (res) {
+                $('#userList').html(res)
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+
+});

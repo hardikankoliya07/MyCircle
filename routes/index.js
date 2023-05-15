@@ -7,6 +7,7 @@ const postControl = require('../controller/post');
 const post = require('../models/post');
 const nodemailer = require('nodemailer');
 const commentControl = require('../controller/comments');
+const Notification = require('../models/notification')
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -18,7 +19,17 @@ const transporter = nodemailer.createTransport({
   secure: true
 });
 
-router.get('/verify', async (req, res, next) => {
+router.get('/notificationCount', async (req, res, next) => {
+  const countNotification = await Notification.countDocuments({ notificationFor: req.user._id, isSeen: false });
+  res.send({
+    countNotification: countNotification
+  })
+})
+
+router.get('/verify', function (req, res, next) {
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  next();
+}, async (req, res, next) => {
   const email = req.query.email
   const data = await UsersModel.countDocuments({ email: email }, { _id: 1, email: 1 });
   if (data) {
@@ -39,24 +50,30 @@ router.get('/comment', async (req, res, next) => {
 })
 
 /** landing page */
-router.get('/', async (req, res, next) => {
-  const count = await post.countDocuments({ isArchive: false })
+router.get('/', function (req, res, next) {
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  next();
+}, async (req, res, next) => {
+  const data = await postControl.allPosts(req)
+  const count = await post.countDocuments(data.cond)
   const pageArr = [];
   for (let i = 0; i < Math.ceil(count / 4); i++) {
     pageArr.push(i + 1)
   }
-  const data = await postControl.allPosts(req)
+  if (req.isAuthenticated()) {
+    return res.redirect('/timeline')
+  }
   if (req.query.sortPost == 'date' || req.query.sortPost == 'title' || req.query.searchVal == "") {
     res.render('partials/post/filter', {
       title: "Landing page",
-      data: data,
+      data: data.data,
       pages: pageArr,
       layout: 'blank'
     })
   } else {
     res.render('landing', {
       title: "Landing page",
-      data: data,
+      data: data.data,
       pages: pageArr,
     })
   }
@@ -64,6 +81,9 @@ router.get('/', async (req, res, next) => {
 
 /** user login post api */
 router.post('/login', function (req, res, next) {
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  next();
+}, function (req, res, next) {
   passport.authenticate('local', function (err, user, info) {
     if (err) return next(err)
     if (!user) {
@@ -131,12 +151,12 @@ router.post('/register', async function (req, res, next) {
       };
       transporter.sendMail(mailOptions, function (err, info) {
         if (err) {
-          res.status(500).send({
+          res.statusCode(500).send({
             type: 'error',
             message: err.message
           })
         } else {
-          res.status(200).send({
+          res.statusCode(200).send({
             type: "success",
             message: 'mail send...',
             message_id: info.messageId

@@ -1,4 +1,5 @@
 const user = require('../models/user');
+const { ObjectId } = require('mongoose').Types;
 
 /** controller use for user list */
 module.exports.user = function (req) {
@@ -25,7 +26,7 @@ module.exports.user = function (req) {
 
     return user.aggregate([
         {
-            $match: searchCond
+            $match: { _id: { $ne: new ObjectId(req.user._id) }, ...searchCond }
         },
         {
             $sort: { createdOn: -1 }
@@ -52,13 +53,46 @@ module.exports.user = function (req) {
             }
         },
         {
+            $lookup: {
+                from: "follows",
+                let: {
+                    "followerId": "$_id",
+                },
+                pipeline: [{
+                    $match: {
+                        $expr: {
+                            $and: [{
+                                $eq: ["$followingId", new ObjectId(req.user._id)]
+                            },
+                            {
+                                $eq: ["$followerId", "$$followerId"]
+                            }]
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        createdOn: 1,
+                        status: 1,
+                        followingId: 1,
+                        followerId: 1
+                    }
+                }],
+                as: "follow"
+            }
+        },
+        {
             $project: {
                 first_name: 1,
                 last_name: 1,
                 email: 1,
                 profile: 1,
+                gender: 1,
+                account_status: 1,
                 createdPost: { $size: "$userPost" },
-                savedPost: { $size: "$savedPost" }
+                savedPost: { $size: "$savedPost" },
+                follows: { $arrayElemAt: ['$follow', 0] }
             }
         }
     ])

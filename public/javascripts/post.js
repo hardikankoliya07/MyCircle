@@ -115,7 +115,7 @@ $(function () {
             $.ajax({
                 type: 'post',
                 async: true,
-                url: '/post/',
+                url: '/post',
                 data: formData,
                 contentType: false,
                 processData: false,
@@ -123,6 +123,8 @@ $(function () {
                     if (res.type == 'success') {
                         notify('success', res.message);
                         $("#addPostModel").modal("hide");
+                        $('#addPost').off('click');
+                        postOperation()
                     } else {
                         notify('error', res.message);
                     }
@@ -215,14 +217,14 @@ $(function () {
         $.ajax({
             type: 'put',
             async: true,
-            url: "/post/",
+            url: "/post",
             data: {
                 postId: $(this).data('postid'),
                 archive: $(this).data('archive')
             },
             success: function (res) {
                 if (res.type == 'success') {
-                    $(`#post-${id}`).parent().remove()
+                    $(`#post-${id}`).parent().remove();
                     notify('success', res.message);
                 } else {
                     notify('error', res.message)
@@ -236,10 +238,11 @@ $(function () {
 
     $(document).on('click', '#like', function () {
         const id = $(this).data('postid');
+        const postOwner = $(this).data('postby');
         $.ajax({
             type: 'put',
             async: true,
-            url: `/post?likePostId=${id}`,
+            url: `/post?likePostId=${id}&postOwner=${postOwner}`,
             success: function (res) {
                 if (res.type == 'success') {
                     notify('success', res.message);
@@ -273,11 +276,11 @@ $(function () {
                 console.log(err);
             }
         });
-    })
+    });
 
     $(document).on('click', '#commentModal', function () {
         $('#commentArea').val("")
-    })
+    });
 
     $(document).on('click', '#btnComment', function () {
         const id = $(this).data('postid');
@@ -302,11 +305,11 @@ $(function () {
                 console.log(err);
             }
         });
-    })
+    });
 
     $(document).on('click', '#subCommentBox', function () {
         $(`#comment-${$(this).data('comment')}`).toggle();
-    })
+    });
 
     $(document).on('click', '#btnSubComment', function () {
         const _this = this;
@@ -334,7 +337,7 @@ $(function () {
                 console.log(err);
             }
         });
-    })
+    });
 
     $(document).on('click', '#mainComment', function () {
         const maincommentId = $(this).data('maincommentid');
@@ -350,7 +353,7 @@ $(function () {
                 console.log(err);
             }
         });
-    })
+    });
 
     $(document).on('click', '#subComment', function () {
         const subcommentid = $(this).data('subcommentid');
@@ -366,7 +369,6 @@ $(function () {
                 console.log(err);
             }
         });
-    })
-
+    });
 
 });

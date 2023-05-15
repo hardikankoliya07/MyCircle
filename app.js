@@ -4,30 +4,32 @@ const express = require('express');
 const path = require('path');
 
 const logger = require('morgan');
-const moment = require('moment')
-const { create } = require('express-handlebars')
-const dbConfig = require('./config')
+const moment = require('moment');
+const { create } = require('express-handlebars');
+const dbConfig = require('./config');
 
-const helper = require('./helper/helper')
-
-const indexRouter = require('./routes/index');
-const timeline = require('./routes/timeline');
+const helper = require('./helper/helper');
 
 /** Routes */
-const posts = require('./routes/post')
-const users = require('./routes/user')
-const report = require('./routes/report')
+const indexRouter = require('./routes/index');
+const timeline = require('./routes/timeline');
+const posts = require('./routes/post');
+const users = require('./routes/user');
+const report = require('./routes/report');
+const request = require('./routes/request');
+const notification = require('./routes/notification');
+
 const helpers = require('handlebars-helpers')();
 
 const app = express();
 
 /** database configuration */
-dbConfig()
+dbConfig();
 
 /** Models */
-const Post = require('./models/post')
-const SavedPost = require('./models/savedPost')
-const Report = require('./models/report')
+const Post = require('./models/post');
+const SavedPost = require('./models/savedPost');
+const Report = require('./models/report');
 const User = require('./models/user');
 
 // view engine setup
@@ -73,7 +75,7 @@ const hbs = create({
   }
 })
 app.set('views', path.join(__dirname, 'views'));
-app.engine('hbs', hbs.engine)
+app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
@@ -82,13 +84,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 /** auth helper */
-helper.login(app)
+helper.login(app);
 
 /** store auth user in locals */
-app.use(helper.authUser)
+app.use(helper.authUser);
 
 /** add flash message */
-app.use(helper.flash)
+app.use(helper.flash);
 
 app.use('/', indexRouter);
 
@@ -98,8 +100,11 @@ app.use(helper.authHelper)
 /** other router */
 app.use('/timeline', timeline);
 app.use('/user', users);
-app.use('/post', posts)
-app.use('/report', report)
+app.use('/post', posts);
+app.use('/report', report);
+app.use('/request', request);
+app.use('/notification', notification);
+
 
 /** CronJob : every 1 minute delete file */
 const CronJob = require('cron').CronJob;
@@ -118,7 +123,7 @@ new CronJob(
           userSaved: userSavedPost,
           otherSaved: otherSavedPost
         }
-        await Report.updateOne({ userId: users._id }, { $set: data }, { upsert: true })
+        await Report.updateOne({ userId: users._id }, { $set: data }, { upsert: true });
       }
     } catch (error) {
       console.log(error.message);
