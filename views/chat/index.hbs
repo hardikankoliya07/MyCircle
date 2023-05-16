@@ -16,26 +16,12 @@
                     placeholder="Search by first name, last name, full name" />
             </div>
             <div class="p-2" style=" height: 820px; overflow-x: hidden; overflow-y: auto;">
+                {{#each data}}
                 {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
-                {{> chat/list}}
+                {{/each}}
             </div>
         </div>
-        <div class="col-9 p-2">
+        <div class="col-9 p-2 chatBox">
             {{> chat/chatBox}}
         </div>
     </div>
