@@ -1,7 +1,8 @@
 $(function () {
 
-    $(document).on('click', '#userList', function () {
+    $(document).on('click', '.userList', function () {
         const uId = $(this).data('uid');
+        $(`#seen-${uId}`).remove();
         $.ajax({
             type: 'put',
             url: '/chat',
@@ -19,13 +20,21 @@ $(function () {
     });
 
     socket.on("message", function (args) {
-        $('.messageBox').append(`<div class="card float-left mt-2 ms-2 mb-2" style="margin-right: auto;">
-            <div class="card-body">
-                <p class="card-text" style="text-overflow: ellipsis; max-width: 50ch; word-wrap:break-word; overflow:hidden;">
-                    ${args}
-                </p>
-            </div>
-        </div>`);
+        const uId = $('.userList').data('uid');
+        const boxId = $('.chatBox').children().attr('id');
+        if (uId == boxId) {
+            $('.messageBox').append(`<div class="card float-left mt-2 ms-2 mb-2" style="margin-right: auto;">
+                <div class="card-body">
+                    <p class="card-text" style="text-overflow: ellipsis; max-width: 50ch; word-wrap:break-word; overflow:hidden;">
+                        ${args.message}
+                    </p>
+                </div>
+            </div>`);
+        } else {
+            let count = 0 | Number($(`#seen-${args.sendBy}`).text())
+            count++;
+            $(`#isSeen-${args.sendBy}`).html(`<span id=seen-${args.sendBy} class="badge bg-red">${count}</span>`);
+        }
     });
 
     $(document).on('click', '#sendMsg', function () {

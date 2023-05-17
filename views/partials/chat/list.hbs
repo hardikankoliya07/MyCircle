@@ -1,11 +1,14 @@
-<div class="card m-1" id="userList" style="cursor: pointer;" data-uid={{_id}}>
+<div class="card m-1 userList" style="cursor: pointer;" data-uid={{_id}}>
     <div class="card-body">
         <div class="row">
             <div class="avatar avatar-m col-2"
                 style="background-image:{{#if profile}}url(/images/uploads/{{profile}}){{else}}url(/images/default/user.png){{/if}}; border-radius: 50%; text-align: start;">
             </div>
-            <div class="col-10">
+            <div class="col-8">
                 <h4 style="top: 35%; position: absolute">{{full_name}}</h4>
+            </div>
+            <div class="col-2" id="isSeen-{{_id}}">
+                
             </div>
         </div>
     </div>

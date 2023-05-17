@@ -13,6 +13,9 @@ module.exports.chat = function (req) {
                     "sendBy": "$_id",
                 },
                 pipeline: [{
+                    $limit: 15
+                },
+                {
                     $sort: { createdAt: -1 }
                 },
                 {

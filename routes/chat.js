@@ -16,7 +16,7 @@ router.post('/', async (req, res, next) => {
         receiveBy: uId,
         message: msg
     };
-    io.to(uId).emit('message', msg);
+    io.to(uId).emit('message', data);
     const docs = await Chat.create(data);
     res.send({
         data: docs
