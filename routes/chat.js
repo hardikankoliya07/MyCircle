@@ -5,8 +5,19 @@ const User = require('../models/user');
 const chatControl = require('../controller/chat');
 
 router.get('/', async (req, res, next) => {
-    const data = await User.find({ _id: { $ne: req.user._id } }, { _id: 1, full_name: 1, profile: 1 }).lean();
-    res.render('chat/index', { title: 'Chats', data: data });
+    const searchUser = req.query?.searchUser;
+    let searchCond = {};
+    if (searchUser) {
+        searchCond = {
+            full_name: { $regex: searchUser, $options: 'i' }
+        }
+    }
+    const data = await User.find({ _id: { $ne: req.user._id }, ...searchCond }, { _id: 1, full_name: 1, profile: 1 }).lean();
+    if (searchUser || searchUser == "") {
+        res.render('chat/index', { title: 'Chats', data: data, layout: 'blank' });
+    } else {
+        res.render('chat/index', { title: 'Chats', data: data });
+    };
 });
 
 router.post('/', async (req, res, next) => {

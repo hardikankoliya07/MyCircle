@@ -15,7 +15,8 @@
         </div>
     </div>
     <div class="card w-100 position-relative" style="height: 825px;">
-        <div class="card messageBox" style="height:750px; overflow-y: scroll; background-color: rgb(169, 169, 169);">
+        <div class="card messageBox"
+            style="height:750px; overflow-y: scroll; display:  : flex; flex-direction: column-reverse ; overflow: auto; display: flex; background-color: rgb(169, 169, 169);">
             {{#each messages}}
             {{> chat/message}}
             {{/each}}
