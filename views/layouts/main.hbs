@@ -35,6 +35,12 @@
       font-feature-settings: "cv03", "cv04", "cv11";
     }
   </style>
+
+  <script>
+    var socket = io({
+      query: { "uuId": '{{authUser._id}}' }
+    });
+  </script>
 </head>
 
 <body>
@@ -60,9 +66,7 @@
         }
       });
     }
-    var socket = io({
-      query: { "uuId": '{{authUser._id}}' }
-    })
+
     socket.on("post-like", function (args) {
       notify('success', `your post liked By ${args}`);
       getCount()

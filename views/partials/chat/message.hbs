@@ -1,0 +1,17 @@
+{{#compare @root.authUser._id '==' receiveBy}}
+<div class="card float-left mt-2 ms-2 mb-2" style="margin-right: auto;">
+    <div class="card-body">
+        <p class="card-text" style="text-overflow: ellipsis; max-width: 50ch; word-wrap:break-word; overflow:hidden;">
+            {{message}}
+        </p>
+    </div>
+</div>
+{{else}}
+<div class="card float-right me-2 mt-2 mb-2" style="margin-left: auto;">
+    <div class="card-body">
+        <p class="card-text" style="text-overflow: ellipsis; max-width: 50ch; word-wrap:break-word; overflow:hidden;">
+            {{message}}
+        </p>
+    </div>
+</div>
+{{/compare}}
