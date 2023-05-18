@@ -9,7 +9,20 @@ router.get('/', async (req, res, next) => {
     let searchCond = {};
     if (searchUser) {
         searchCond = {
-            full_name: { $regex: searchUser, $options: 'i' }
+            $or: [
+                {
+                    first_name: { $regex: searchUser, $options: 'i' },
+                },
+                {
+                    last_name: { $regex: searchUser, $options: 'i' }
+                },
+                {
+                    full_name: { $regex: searchUser, $options: 'i' }
+                },
+                {
+                    email: { $regex: searchUser, $options: 'i' }
+                }
+            ]
         }
     }
     const data = await User.find({ _id: { $ne: req.user._id }, ...searchCond }, { _id: 1, full_name: 1, profile: 1 }).lean();

@@ -12,6 +12,7 @@ $(function () {
             },
             success: function (res) {
                 $('.chatBox').html(res);
+                $("#chatMsg").focus();
             },
             error: function (error) {
                 console.log(error);
@@ -24,11 +25,11 @@ $(function () {
         const boxId = $('.chatBox').children().attr('id');
         if (uId == boxId) {
             $('.messageBox').prepend(`<div class="card float-left mt-2 ms-2 mb-2" style="margin-right: auto;">
-            <div class="card-body">
-            <p class="card-text" style="text-overflow: ellipsis; max-width: 50ch; word-wrap:break-word; overflow:hidden;">
-            ${args.message}
-            </p>
-            </div>
+                <div class="card-body">
+                    <p class="card-text" style="text-overflow: ellipsis; max-width: 50ch; word-wrap:break-word; overflow:hidden;">
+                        ${args.message}
+                    </p>
+                </div>
             </div>`);
         } else {
             let count = 0 | Number($(`#seen-${args.sendBy}`).text())
@@ -49,11 +50,11 @@ $(function () {
             async: true,
             url: `/chat?searchUser=${$(this).val()}`,
             success: function (res) {
-                let data = $(res).find(".filterUser");
+                let data = $(res).find(".filterUser > *");
                 $('.filterUser').html(data)
             },
             error: function (error) {
-                alert(error)
+                console.log(error)
             }
         })
     });
