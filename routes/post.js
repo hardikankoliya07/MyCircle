@@ -151,52 +151,52 @@ router.put('/:postId?', async (req, res, next) => {
             res.send({
                 type: 'success',
                 message: `Post ${(liked) ? "Disliked..." : "liked..."}`
-            })
+            });
         } else if (commentPostId && comment || parent) {
             const data = {
                 commentBy: req.user._id,
                 postId: commentPostId,
                 comment: comment,
             };
-            data.parent = parent
+            data.parent = parent;
             await Comment.create([data]);
-            const newData = await commentControl.comments(commentPostId)
+            const newData = await commentControl.comments(commentPostId);
             res.render('partials/post/comment', {
                 data: newData,
-                layout: 'blank'
-            })
+                layout: 'blank',
+            });
         } else {
             editUpload(req, res, async function (err) {
                 if (err instanceof multer.MulterError) {
                     res.send({
                         type: 'error',
                         message: "Max file size 2MB allowed!"
-                    })
+                    });
                 } else if (err) {
                     res.send({
                         type: 'error',
                         message: err.message
-                    })
+                    });
                 } else {
                     const data = {
                         'title': req.body.title,
                         'desc': req.body.desc
-                    }
+                    };
                     if (req.file != undefined) {
                         data.postImg = req.file.filename
-                    }
-                    const userPost = await post.countDocuments({ _id: req.body.postId, postBy: req.user._id })
+                    };
+                    const userPost = await post.countDocuments({ _id: req.body.postId, postBy: req.user._id });
                     if (userPost) {
                         await post.findOneAndUpdate({ _id: req.body.postId }, { $set: data })
                         res.send({
                             type: 'success',
                             message: 'Post update successfully'
-                        })
+                        });
                     } else {
                         res.send({
                             type: 'error',
                             message: 'You are not owner of this post'
-                        })
+                        });
                     }
                 }
             })
@@ -205,7 +205,7 @@ router.put('/:postId?', async (req, res, next) => {
         res.send({
             type: "error",
             message: error.message
-        })
+        });
     }
 });
 
@@ -216,27 +216,27 @@ router.post('/', async (req, res, next) => {
                 res.send({
                     type: 'error',
                     message: "Max file size 2MB allowed!"
-                })
+                });
             } else if (err) {
                 res.send({
                     type: 'error',
                     message: err.message
-                })
+                });
             } else {
-                req.body.postImg = req.file.filename
-                req.body.postBy = req.user._id
-                await post.create(req.body)
+                req.body.postImg = req.file.filename;
+                req.body.postBy = req.user._id;
+                await post.create(req.body);
                 res.send({
                     type: 'success',
                     message: 'post upload successfully'
-                })
+                });
             }
-        })
+        });
     } catch (error) {
         res.send({
             type: 'error',
             message: "Something when wrong"
-        })
+        });
     }
 });
 
@@ -248,7 +248,7 @@ router.delete('/', async (req, res, next) => {
     res.render('partials/post/comment', {
         data: data,
         layout: 'blank'
-    })
+    });
 });
 
 module.exports = router;

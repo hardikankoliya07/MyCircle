@@ -1,0 +1,42 @@
+{{#each data}}
+<div id={{_id}}>
+    <div>
+        <div class="card mb-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="avatar avatar-m col-2"
+                        style="background-image:{{#if profile}}url(/images/uploads/{{profile}}){{else}}url(/images/default/user.png){{/if}}; border-radius: 50%; text-align: start;">
+                    </div>
+                    <div class="col-10">
+                        <h4 style="top: 35%; position: absolute">{{full_name}}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card w-100 position-relative" style="height: 825px;">
+        <div class="card messageBox"
+            style="height:750px; overflow-y: scroll; display:  : flex; flex-direction: column-reverse ; overflow: auto; display: flex; background-color: rgb(169, 169, 169);">
+            {{#each messages}}
+            {{> chat/message}}
+            {{/each}}
+        </div>
+        <div class="row p-3 bottom-0 w-100">
+            <div class="col-10">
+                <input type="text" id="chatMsg" class="form-control" placeholder="Type Message..." />
+            </div>
+            <div class="col-2 text-center">
+                <button id="sendMsg" data-uid={{_id}} class="btn btn-primary text-center">
+                    SEND <svg xmlns="http://www.w3.org/2000/svg" class="ms-2 icon icon-tabler icon-tabler-send"
+                        width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M10 14l11 -11"></path>
+                        <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{{/each}}
